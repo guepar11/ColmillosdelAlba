@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es"> 
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colmillos Del Alba | Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+ 
+    <style> 
+        :root {
+            /* Paleta Ultra Profesional */
+            --rojo-core: #e60026;
+            --oro-brillante: #ffcc00;
+            --naranja-fuego: #ff8c00; 
+            --blanco-puro: #ffffff;
+            --fondo-negro: #050505;
+            --tarjeta: rgba(20, 20, 20, 0.85);
+            --sidebar-width: 260px;
+            --gradiente-premium: linear-gradient(135deg, var(--rojo-core), var(--oro-brillante));
+        }
+ 
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--fondo-negro); color: #fff; margin: 0; display: flex; min-height: 100vh; overflow-x: hidden; }
+ 
+        /* --- fondo --- */
+        #bg-combat { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: -1; 
+            /* degradado del fondo */
+            background: linear-gradient(-45deg, #3d0006, #6b1200, #3d0006, #1a0800);
+            background-size: 400% 400%; /* Tamaño grande para la animación */
+            animation: gradientFire 15s ease infinite; /* Animación lenta y suave */
+            overflow: hidden; 
+        }
+ 
+        /* animacion para el fondo degradado */
+        @keyframes gradientFire {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+ 
+        .sword { position: absolute; width: 50px; height: 50px; background-size: contain; background-repeat: no-repeat; opacity: 0.15; filter: drop-shadow(0 0 10px var(--oro-brillante)); animation: floatSwords 20s infinite linear; }
+        .s-neth { background-image: url('https://minecraft.wiki/images/Netherite_Sword_JE2_BE2.png'); }
+        .s-diam { background-image: url('https://minecraft.wiki/images/Diamond_Sword_JE3_BE3.png'); }
+        .s-gold { background-image: url('https://minecraft.wiki/images/Golden_Sword_JE2_BE2.png'); }
+        @keyframes floatSwords { 0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 10% { opacity: 0.2; } 100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } }
+ 
+        /* --- boton menu --- */
+        .menu-toggle {
+            position: fixed; top: 20px; left: 20px; z-index: 1100;
+            background: var(--gradiente-premium); border: none; color: black;
+            padding: 12px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
+        }
+ 
+        /* --- sidebar --- */
+        .sidebar { 
+            width: var(--sidebar-width); background: linear-gradient(180deg, #0a0a0a 0%, #000 100%); 
+            border-right: 1px solid rgba(255, 255, 255, 0.1); padding: 0; 
+            position: fixed; height: 100vh; z-index: 1000; 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column;
+        }
+        .sidebar.hidden { transform: translateX(-100%); }
+ 
+        .sidebar-header {
+            margin-top: 80px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 25px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 20px;
+        }
+        .sidebar h2 { 
+            font-family: 'Syncopate', sans-serif; font-size: 0.75rem; margin: 0;
+            background: linear-gradient(90deg, var(--blanco-puro), var(--oro-brillante));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: 3px; font-weight: 900;
+        }
+ 
+        .nav-container { padding: 0 15px; }
+        .nav-btn { 
+            width: 100%; background: transparent; border: 1px solid transparent; 
+            color: #888; padding: 14px 18px; text-align: left; border-radius: 10px; 
+            cursor: pointer; transition: 0.3s; margin-bottom: 8px; font-weight: 700; 
+            display: flex; align-items: center; gap: 12px; font-size: 0.85rem;
+        }
+        .nav-btn i { font-size: 1rem; transition: 0.3s; }
+ 
+        .nav-btn:hover { color: var(--blanco-puro); background: rgba(255, 255, 255, 0.05); }
+ 
+        .nav-btn.active { 
+            background: rgba(230, 0, 38, 0.1); color: var(--blanco-puro); 
+            border: 1px solid var(--rojo-core); box-shadow: 0 0 15px rgba(230, 0, 38, 0.2);
+        }
+        .nav-btn.active i { color: var(--oro-brillante); }
+ 
+        /* --- menu contenido --- */
+        .main-content { 
+            margin-left: var(--sidebar-width); flex-grow: 1; padding: 60px; 
+            z-index: 1; transition: margin 0.4s;
+        }
+        .main-content.full { margin-left: 0; }
+ 
+        .section { display: none; animation: fadeIn 0.6s ease-out; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+ 
+        h1 { 
+            font-family: 'Syncopate', sans-serif; font-size: 1.4rem; 
+            background: linear-gradient(90deg, var(--blanco-puro), var(--oro-brillante));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            border-left: 4px solid var(--rojo-core); padding-left: 20px; margin-bottom: 45px; 
+        }
+ 
+        /* --- lideres --- */
+        .leader-tree { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        .leader-box { 
+            background: linear-gradient(145deg, #151515, #0a0a0a); padding: 20px; border-radius: 12px; 
+            border: 1px solid rgba(255, 204, 0, 0.3); text-align: center; min-width: 180px; 
+            position: relative; transition: 0.3s;
+        }
+        .leader-box:hover { border-color: var(--oro-brillante); box-shadow: 0 0 20px rgba(255, 204, 0, 0.15); }
+        .leader-box img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--rojo-core); margin-bottom: 12px; padding: 3px; background: #000; }
+        .leader-box .rank { color: var(--oro-brillante); font-size: 0.65rem; font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 8px; letter-spacing: 1px; }
+        .line-v { width: 2px; height: 40px; background: linear-gradient(to bottom, var(--rojo-core), var(--oro-brillante)); }
+ 
+        /* --- tarjetas --- */
+        .farm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .farm-card { background: var(--tarjeta); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); transition: 0.4s; backdrop-filter: blur(10px); }
+        .farm-card:hover { transform: translateY(-8px); border-color: var(--oro-brillante); }
+        .farm-card h3 { color: var(--blanco-puro); margin: 0; font-size: 1.1rem; }
+        .farm-badge { display: inline-block; padding: 5px 10px; background: var(--gradiente-premium); color: #000; font-size: 0.65rem; font-weight: 900; border-radius: 4px; margin-top: 10px; text-transform: uppercase; }
+ 
+        .roles-nav { display: flex; gap: 10px; flex-wrap: wrap; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; margin-bottom: 35px; border: 1px solid rgba(255,255,255,0.05); }
+        .btn-rol { background: #111; border: 1px solid #222; color: #aaa; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.7rem; transition: 0.3s; text-transform: uppercase; }
+        .btn-rol:hover { border-color: var(--rojo-core); color: #fff; }
+        .btn-rol.active { background: var(--blanco-puro); color: #000; border-color: var(--blanco-puro); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+ 
+        .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+        .card { background: rgba(255, 255, 255, 0.03); padding: 25px 15px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+        .card:hover { background: rgba(255, 255, 255, 0.06); border-color: var(--rojo-core); }
+        .card img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--oro-brillante); margin-bottom: 12px; }
+ 
+        .btn-postular {
+            display: inline-block; padding: 18px 40px; background: var(--gradiente-premium); color: #000; 
+            text-decoration: none; border-radius: 10px; font-weight: 900; font-size: 0.9rem;
+            box-shadow: 0 10px 20px rgba(230, 0, 38, 0.2); transition: 0.3s; letter-spacing: 1px;
+        }
+        .btn-postular:hover { transform: scale(1.05); box-shadow: 0 15px 25px rgba(255, 204, 0, 0.3); }
+ 
+        .status-box { background: var(--tarjeta); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); }
+        .status-box p { font-size: 1.1rem; font-weight: 600; margin: 15px 0; display: flex; align-items: center; gap: 15px; }
+ 
+        /* imagen reclutamiento */
+        .img-reclutamiento {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+        /* --- estilos top donadores --- */
+        .donors-container { max-width: 900px; margin: 0 auto; }
+        .refresh-tag { text-align: right; font-size: 0.75rem; color: #666; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        #timer { color: var(--oro-brillante); font-weight: bold; }
+        .podium { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 60px 0 40px 0; height: 260px; }
+        .podium-item { background: var(--tarjeta); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px 15px; text-align: center; position: relative; flex: 1; transition: 0.4s; backdrop-filter: blur(10px); }
+        .podium-item img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--rojo-core); margin-bottom: 10px; background: #000; }
+        .rank-1 { height: 110%; border-color: var(--oro-brillante); box-shadow: 0 0 30px rgba(255,204,0,0.15); transform: scale(1.15); z-index: 2; }
+        .rank-1 img { border-color: var(--oro-brillante); width: 90px; height: 90px; }
+        .rank-2 { height: 90%; }
+        .rank-3 { height: 80%; }
+        .crown { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 2rem; filter: drop-shadow(0 0 10px var(--oro-brillante)); }
+        .money { display: block; color: #00ff88; font-weight: 900; font-size: 1.4rem; margin-top: 8px; }
+        .other-donors { background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); margin-top: 20px; }
+        .donor-row { display: flex; justify-content: space-between; padding: 18px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center; }
+        .donor-row:last-child { border: none; }
+        /* --- posiciones lideres --- */
+        .leader-tree { width: 100%; display: flex; flex-direction: column; align-items: center; }
+ 
+        #rank-3 { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 20px; 
+            width: 100%; 
+            max-width: 1100px; 
+            margin-top: 30px; 
+            justify-content: center;
+        }
+ 
+        .leader-box { 
+            width: 100% !important; 
+            max-width: 220px; 
+            margin: 0 auto; 
+        }
+    </style>
+</head>
+<body>
+ 
+    <div id="bg-combat"></div>
+ 
+    <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i> MENU
+    </button>
+ 
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>DASHBOARD</h2>
+        </div>
+        <div class="nav-container">
+            <button class="nav-btn active" onclick="switchTab('info', this)"><i class="fas fa-satellite-dish"></i> ESTADO</button>
+            <button class="nav-btn" onclick="switchTab('lideres', this)"><i class="fas fa-crown"></i> JERARQUÍA</button>
+            <button class="nav-btn" onclick="switchTab('granjas', this)"><i class="fas fa-hammer"></i> GRANJAS</button>
+            <button class="nav-btn" onclick="switchTab('zonas', this)"><i class="fas fa-map-marked-alt"></i> ZONAS</button>
+            <button class="nav-btn" onclick="switchTab('miembros', this)"><i class="fas fa-user-shield"></i> MIEMBROS</button>
+            <button class="nav-btn" onclick="switchTab('postulaciones', this)"><i class="fas fa-envelope-open-text"></i> UNIRSE</button>
+            <button class="nav-btn" onclick="switchTab('top-donadores', this)"><i class="fas fa-trophy"></i> TOP DONADORES</button>
+        </div>
+    </div>
+ 
+    <div class="main-content" id="main-content">
+        <div id="info" class="section active">
+            <h1>SISTEMA OPERATIVO</h1>
+            <div class="status-box">
+                <p><i class="fas fa-shield-alt" style="color:var(--rojo-core)"></i> CLAN: <span style="color: var(--oro-brillante)">COLMILLOS DEL ALBA</span></p>
+                <p><i class="fas fa-server" style="color:var(--oro-brillante)"></i> SERVIDOR: <span style="color: #fff">DIOSESMC</span></p>
+                <p><i class="fas fa-check-circle" style="color: #00ff88"></i> ESTADO: <span style="color: #00ff88">EN LÍNEA</span></p>
+            </div>
+        </div>
+ 
+         <div id="lideres" class="section">
+            <h1>COMANDO CENTRAL</h1>
+            <div class="leader-tree">
+                <div id="rank-1"></div> <div class="line-v"></div>
+                <div id="rank-2"></div> <div class="line-v"></div>
+ 
+                <div id="rank-3" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; justify-items: center;">
+                </div>
+            </div>
+        </div>
+ 
+        <div id="granjas" class="section">
+            <h1>INFRAESTRUCTURA</h1>
+            <div class="farm-grid">
+                <div class="farm-card"><img src="https://imgur.com/ZawCT1U.png" style="width:100%; height:160px; object-fit:cover;"><div style="padding:20px;"><h3>Hierro</h3><span class="farm-badge">Automatica</span></div></div>
+                <div class="farm-card"><img src="https://imgur.com/sOvjMva.png" style="width:100%; height:160px; object-fit:cover;"><div style="padding:20px;"><h3>Oro</h3><span class="farm-badge">SemiAutomatica</span></div></div>
+                <div class="farm-card"><img src="https://imgur.com/s3F1aKG.png" style="width:100%; height:160px; object-fit:cover;"><div style="padding:20px;"><h3>Magma</h3><span class="farm-badge">SemiAutomatica</span></div></div>
+                <div class="farm-card"><img src="https://imgur.com/nseW5Rd.png" style="width:100%; height:160px; object-fit:cover;"><div style="padding:20px;"><h3>Zanahorias</h3><span class="farm-badge">Automatica</span></div></div>
+            </div>
+        </div>
+ 
+<div id="zonas" class="section">
+            <h1>ESTRATEGIA TERRITORIAL</h1>
+            <div class="farm-grid">
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/yKzLGHH.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Base 1</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/BIMqIpG.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Base 2</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/q3iTRjT.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Base 3</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/eMWnwgX.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Base 4</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/WwnAHgw.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Base 5</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/Hq6UTrr.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Base 6</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/OiA4Fcu.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Base 7</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/YICIiMW.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Base 8</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+            </div>
+        </div>
+        <div id="miembros" class="section">
+            <h1>BASE DE DATOS MIEMBROS</h1>
+            <div class="roles-nav">
+                <button class="btn-rol active" onclick="filtroTotal('Todos', this)">Todos</button>
+                <button class="btn-rol" onclick="filtroTotal('𝒑𝒗𝒑', this)">⚔️ PVP</button>
+                <button class="btn-rol" onclick="filtroTotal('𝒃𝒖𝒊𝒍𝒅𝒆𝒓𝒔', this)">⚒️ Builders</button>
+                <button class="btn-rol" onclick="filtroTotal('𝒕𝒆𝒄𝒏𝒊𝒄𝒐𝒔', this)">⚙️ Técnicos</button>
+                <button class="btn-rol" onclick="filtroTotal('Farmer', this)">🌱 Farmers</button>
+                <button class="btn-rol" onclick="filtroTotal('Herrero', this)">🔨 Herreros</button>
+            </div>
+            <div class="member-grid" id="lista-usuarios"></div>
+        </div>
+ 
+        <div id="postulaciones" class="section">
+            <h1>RECLUTAMIENTO</h1>
+            <div style="background: linear-gradient(145deg, #111, #050505); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 204, 0, 0.2); text-align: center;">
+ 
+                <img src="https://imgur.com/uN5c9vT.png" alt="Reclutamiento Colmillos del Alba" class="img-reclutamiento">
+ 
+                <h2 style="font-family: 'Syncopate'; font-size: 1.2rem; color: var(--blanco-puro); margin-bottom: 15px;">¿TIENES LO QUE SE NECESITA?</h2>
+                <p style="color: #888; margin-bottom: 40px; font-weight: 500;">Únete a el clan. Procesamos solicitudes cada 24 horas.</p>
+                <a href="https://discord.gg/xw9pzw3kB5" target="_blank" class="btn-postular">
+                    <i class="fas fa-paper-plane"></i> ENVIAR SOLICITUD
+                </a>
+            </div>
+        </div>
+        <div id="top-donadores" class="section">
+            <h1>RANKING DE CONTRIBUYENTES</h1>
+            <div class="donors-container">
+                <div class="refresh-tag">Sincronización en: <span id="timer">05:00</span></div>
+                <div id="podium-area" class="podium"></div>
+                <div id="list-area" class="other-donors"></div>
+            </div>
+        </div>
+    </div>
+ 
+    <script>
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('hidden');
+            document.getElementById('main-content').classList.toggle('full');
+        }
+ 
+        function createSwords() {
+            const container = document.getElementById('bg-combat');
+            const types = ['s-neth', 's-diam', 's-gold'];
+            for(let i=0; i<15; i++) {
+                const s = document.createElement('div');
+                s.className = `sword ${types[Math.floor(Math.random()*3)]}`;
+                s.style.left = Math.random()*100 + 'vw';
+                s.style.animationDelay = Math.random()*15 + 's';
+                container.appendChild(s);
+            }
+        }
+        createSwords();
+ 
+        function switchTab(id, btn) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+            if(window.innerWidth < 1024) toggleMenu();
+        }
+ 
+        const API_URL = "https://bot-discord-production-e093.up.railway.app/miembros";
+        let miembrosCache = [];
+ 
+        const DATA_LIDERES = {
+            supremo: { nick: "guepar_3111", rango: "👑 Líder Principal" },
+            colider: { nick: "nicol3_espin0za", rango: "🥈 Colíder General" },
+            divisiones: [
+                { nick: "teamofurch", rango: "⚒️ Líder Construcción" },
+                { nick: "Jowy19", rango: "📐 Colíder Construcción" },
+                { nick: "postm_alone", rango: "⚔️ Líder PvP" },
+                { nick: "Machiwebs3640", rango: "🛡️ Colíder PvP" },
+                { nick: "danielitaxgg18", rango: "⚙️ Líder Técnico" },
+                { nick: "1fsi.", rango: "🔧 Lider Farmer" },
+                { nick: "Jus.7", rango: "📜 Staff" },
+                { nick: "Hell_8", rango: "📜 Staff" }
+            ]
+        };
+ 
+        async function inicializar() {
+            try {
+                const res = await fetch(`${API_URL}?t=${Date.now()}`);
+                miembrosCache = await res.json();
+                renderJerarquia();
+                filtroTotal('Todos');
+            } catch(e) { console.error(e); }
+        }
+ 
+        function renderJerarquia() {
+            document.getElementById('rank-1').innerHTML = cardLider(DATA_LIDERES.supremo);
+            document.getElementById('rank-2').innerHTML = cardLider(DATA_LIDERES.colider);
+            document.getElementById('rank-3').innerHTML = DATA_LIDERES.divisiones.map(l => cardLider(l)).join('');
+        }
+ 
+        function cardLider(info) {
+            const user = miembrosCache.find(m => (m.username||"").toLowerCase().includes(info.nick.toLowerCase()));
+            const img = user ? user.avatar : 'https://cdn.discordapp.com/embed/avatars/0.png';
+            return `<div class="leader-box"><span class="rank">${info.rango}</span><img src="${img}"><div style="font-weight:900; font-size:0.8rem; color: #fff;">${user ? (user.nickname || user.username) : info.nick}</div></div>`;
+        }
+ 
+        function filtroTotal(rolBusqueda, btn) {
+            if(btn) {
+                document.querySelectorAll('.btn-rol').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+            const grid = document.getElementById('lista-usuarios');
+            const filtrados = rolBusqueda === 'Todos' 
+                ? miembrosCache 
+                : miembrosCache.filter(u => u.roles && u.roles.some(r => r.includes(rolBusqueda) || r.toLowerCase().includes(rolBusqueda.toLowerCase())));
+ 
+            grid.innerHTML = filtrados.map(u => `
+                <div class="card">
+                    <img src="${u.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}">
+                    <div style="font-weight:900; font-size:0.8rem; color: #ddd;">${u.nickname || u.username}</div>
+                </div>
+            `).join('');
+        }
+        let tiempoRestante = 300; 
+        const API_DONACIONES = "https://bot-discord-production-e093.up.railway.app/donaciones";
+ 
+        function iniciarContador() {
+            setInterval(() => {
+                tiempoRestante--;
+                if (tiempoRestante <= 0) {
+                    tiempoRestante = 300;
+                    cargarDonaciones();
+                }
+                let m = Math.floor(tiempoRestante / 60);
+                let s = tiempoRestante % 60;
+                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            }, 1000);
+        }
+ 
+        async function cargarDonaciones() {
+            try {
+                const respuesta = await fetch(`${API_DONACIONES}?t=${Date.now()}`);
+                const lista = await respuesta.json();
+                dibujarDonadores(lista);
+            } catch (e) { console.log("Error al obtener donaciones."); }
+        }
+ 
+        function dibujarDonadores(datos) {
+            const podio = document.getElementById('podium-area');
+            const tabla = document.getElementById('list-area');
+            podio.innerHTML = ''; tabla.innerHTML = '';
+            datos.forEach((user, i) => {
+                if(i < 3) {
+                    const iconos = ['👑', '🥈', '🥉'];
+                    podio.innerHTML += `<div class="podium-item rank-${i+1}"><div class="crown">${iconos[i]}</div><img src="${user.avatar}"><div style="font-weight:900">${user.username}</div><span class="money">$${user.cantidad.toLocaleString()}</span></div>`;
+                } else {
+                    tabla.innerHTML += `<div class="donor-row"><span>#${i+1} <b>${user.username}</b></span><span style="color:#00ff88; font-weight:bold">$${user.cantidad.toLocaleString()}</span></div>`;
+                }
+            });
+        }
+ 
+        inicializar();
+        iniciarContador();
+        cargarDonaciones();
+    </script>
+</body>
+</html>
