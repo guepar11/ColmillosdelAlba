@@ -45,12 +45,25 @@
             100% { background-position: 0% 50%; }
         }
  
-        .sword { position: absolute; width: 50px; height: 50px; background-size: contain; background-repeat: no-repeat; opacity: 0.15; filter: drop-shadow(0 0 10px var(--oro-brillante)); animation: floatSwords 20s infinite linear; }
-        .s-neth { background-image: url('https://minecraft.wiki/images/Netherite_Sword_JE2_BE2.png'); }
-        .s-diam { background-image: url('https://minecraft.wiki/images/Diamond_Sword_JE3_BE3.png'); }
-        .s-gold { background-image: url('https://minecraft.wiki/images/Golden_Sword_JE2_BE2.png'); }
-        @keyframes floatSwords { 0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 10% { opacity: 0.2; } 100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } }
- 
+/* fondos dragon, del clan xD */
+.sword { 
+    position: absolute; 
+    width: 50px; 
+    height: 50px; 
+    background-size: contain; 
+    background-repeat: no-repeat; 
+    opacity: 0.6; 
+    filter: drop-shadow(0 0 10px var(--oro-brillante)); 
+    animation: floatSwords 20s infinite linear; 
+}        .s-neth { background-image: url('https://imgur.com/2hdd6Vm.png'); }
+        .s-diam { background-image: url('https://imgur.com/2hdd6Vm.png'); }
+        .s-gold { background-image: url('https://imgur.com/2hdd6Vm.png'); }
+@keyframes floatSwords { 
+    0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 
+    10% { opacity: 0.8; } /* Aquí subí de 0.2 a 0.8 */
+    90% { opacity: 0.8; } /* Agregué esto para que no desaparezcan tan rápido */
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } 
+} 
         /* --- boton menu --- */
         .menu-toggle {
             position: fixed; top: 20px; left: 20px; z-index: 1100;
@@ -260,35 +273,35 @@
             <div class="farm-grid">
                 <div class="farm-card">
                     <img src="https://i.imgur.com/yKzLGHH.png" style="width:100%; height:160px; object-fit:cover;">
-                    <div style="padding:20px;"><h3>Zona Base 1</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                    <div style="padding:20px;"><h3>Zona Japonesa</h3><span class="farm-badge">ESTRATEGIA</span></div>
                 </div>
                 <div class="farm-card">
                     <img src="https://i.imgur.com/BIMqIpG.png" style="width:100%; height:160px; object-fit:cover;">
-                    <div style="padding:20px;"><h3>Zona Base 2</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                    <div style="padding:20px;"><h3>Zona Japonesa</h3><span class="farm-badge">ESTRATEGIA</span></div>
                 </div>
                 <div class="farm-card">
                     <img src="https://i.imgur.com/q3iTRjT.png" style="width:100%; height:160px; object-fit:cover;">
-                    <div style="padding:20px;"><h3>Zona Base 3</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                    <div style="padding:20px;"><h3>Zona Japonesa</h3><span class="farm-badge">ESTRATEGIA</span></div>
                 </div>
                 <div class="farm-card">
                     <img src="https://i.imgur.com/eMWnwgX.png" style="width:100%; height:160px; object-fit:cover;">
-                    <div style="padding:20px;"><h3>Zona Base 4</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                    <div style="padding:20px;"><h3>Zona Pueblo Pesquero</h3><span class="farm-badge">ESTRATEGIA</span></div>
                 </div>
                 <div class="farm-card">
                     <img src="https://i.imgur.com/WwnAHgw.png" style="width:100%; height:160px; object-fit:cover;">
-                    <div style="padding:20px;"><h3>Zona Base 5</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                    <div style="padding:20px;"><h3>Pueblo Pesquero</h3><span class="farm-badge">ESTRATEGIA</span></div>
                 </div>
                 <div class="farm-card">
                     <img src="https://i.imgur.com/Hq6UTrr.png" style="width:100%; height:160px; object-fit:cover;">
-                    <div style="padding:20px;"><h3>Zona Base 6</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                    <div style="padding:20px;"><h3>Zona Bases</h3><span class="farm-badge">ESTRATEGIA</span></div>
                 </div>
                 <div class="farm-card">
                     <img src="https://i.imgur.com/OiA4Fcu.png" style="width:100%; height:160px; object-fit:cover;">
-                    <div style="padding:20px;"><h3>Zona Base 7</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                    <div style="padding:20px;"><h3>Zona Bases</h3><span class="farm-badge">ESTRATEGIA</span></div>
                 </div>
                 <div class="farm-card">
                     <img src="https://i.imgur.com/YICIiMW.png" style="width:100%; height:160px; object-fit:cover;">
-                    <div style="padding:20px;"><h3>Zona Base 8</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                    <div style="padding:20px;"><h3>Zona Bases</h3><span class="farm-badge">ESTRATEGIA</span></div>
                 </div>
             </div>
         </div>
@@ -309,7 +322,7 @@
             <h1>RECLUTAMIENTO</h1>
             <div style="background: linear-gradient(145deg, #111, #050505); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 204, 0, 0.2); text-align: center;">
  
-                <img src="https://imgur.com/uN5c9vT.png" alt="Reclutamiento Colmillos del Alba" class="img-reclutamiento">
+                <img src="https://imgur.com/kYVP3os.png" alt="Reclutamiento Colmillos del Alba" class="img-reclutamiento">
  
                 <h2 style="font-family: 'Syncopate'; font-size: 1.2rem; color: var(--blanco-puro); margin-bottom: 15px;">¿TIENES LO QUE SE NECESITA?</h2>
                 <p style="color: #888; margin-bottom: 40px; font-weight: 500;">Únete a el clan. Procesamos solicitudes cada 24 horas.</p>
@@ -365,7 +378,7 @@
                 { nick: "teamofurch", rango: "⚒️ Líder Construcción" },
                 { nick: "Jowy19", rango: "📐 Colíder Construcción" },
                 { nick: "postm_alone", rango: "⚔️ Líder PvP" },
-                { nick: "Machiwebs3640", rango: "🛡️ Colíder PvP" },
+                { nick: "Otungs", rango: "🛡️ Colíder PvP" },
                 { nick: "danielitaxgg18", rango: "⚙️ Líder Técnico" },
                 { nick: "1fsi.", rango: "🔧 Lider Farmer" },
                 { nick: "Jus.7", rango: "📜 Staff" },
