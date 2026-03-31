@@ -48,22 +48,22 @@
 /* fondos dragon, del clan xD */
 .sword { 
     position: absolute; 
-    width: 50px; 
-    height: 50px; 
+    width: 130px;               /* Tamaño mucho más grande (era 50px) */
+    height: 130px;              /* Tamaño mucho más grande (era 50px) */
     background-size: contain; 
     background-repeat: no-repeat; 
-    opacity: 0.6; 
-    filter: drop-shadow(0 0 10px var(--oro-brillante)); 
+    opacity: 0.95;              /* Casi sin transparencia (era 0.6) */
+    filter: drop-shadow(0 0 15px var(--oro-brillante)); /* Brillo más fuerte */
     animation: floatSwords 20s infinite linear; 
-}        .s-neth { background-image: url('https://imgur.com/2hdd6Vm.png'); }
+}       .s-neth { background-image: url('https://imgur.com/2hdd6Vm.png'); }
         .s-diam { background-image: url('https://imgur.com/2hdd6Vm.png'); }
         .s-gold { background-image: url('https://imgur.com/2hdd6Vm.png'); }
 @keyframes floatSwords { 
     0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 
-    10% { opacity: 0.8; } /* Aquí subí de 0.2 a 0.8 */
-    90% { opacity: 0.8; } /* Agregué esto para que no desaparezcan tan rápido */
-    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } 
-} 
+    10% { opacity: 0.95; }      /* Opacidad alta al inicio (era 0.8) */
+    90% { opacity: 0.95; }      /* Mantiene opacidad alta (era 0.8) */
+    100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; } 
+}
         /* --- boton menu --- */
         .menu-toggle {
             position: fixed; top: 20px; left: 20px; z-index: 1100;
@@ -325,7 +325,7 @@
                 <img src="https://imgur.com/kYVP3os.png" alt="Reclutamiento Colmillos del Alba" class="img-reclutamiento">
  
                 <h2 style="font-family: 'Syncopate'; font-size: 1.2rem; color: var(--blanco-puro); margin-bottom: 15px;">¿TIENES LO QUE SE NECESITA?</h2>
-                <p style="color: #888; margin-bottom: 40px; font-weight: 500;">Únete a el clan. Procesamos solicitudes cada 24 horas.</p>
+                <p style="color: #888; margin-bottom: 40px; font-weight: 500;">Estamos Disponibles Las 24 Horas Del Dìa</p>
                 <a href="https://discord.gg/xw9pzw3kB5" target="_blank" class="btn-postular">
                     <i class="fas fa-paper-plane"></i> ENVIAR SOLICITUD
                 </a>
