@@ -3,12 +3,12 @@
 <head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colmillos Del Alba | Dashboard</title>
+    <title>Colmillos Del Alba | Panel de control</título>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
  
     <style> 
-        :root {
+        :raíz {
             /* 1fsi */
             --rojo-core: #e60026;
             --oro-brillante: #ffcc00;
@@ -16,8 +16,8 @@
             --blanco-puro: #ffffff;
             --fondo-negro: #050505;
             --tarjeta: rgba(20, 20, 20, 0.85);
-            --sidebar-width: 260px;
-            --gradiente-premium: linear-gradient(135deg, var(--rojo-core), var(--oro-brillante));
+            --ancho de la barra lateral: 260px;
+            --gradiente-premium: gradiente lineal(135deg, var(--rojo-core), var(--oro-brillante));
         }
  
         * { box-sizing: border-box; }
@@ -25,20 +25,20 @@
  
         /* --- fondo --- */
         #bg-combat { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            z-index: -1; 
+            posición: fija; 
+            superior: 0; 
+            izquierda: 0; 
+            ancho: 100%; 
+            altura: 100%; 
+            índice z: -1; 
             /* degradado del fondo */
-            background: linear-gradient(-45deg, #3d0006, #6b1200, #3d0006, #1a0800);
+            fondo: gradiente-lineal(-45deg, #3d0006, #6b1200, #3d0006, #1a0800);
             background-size: 400% 400%; /* 1fsi */
-            animation: gradientFire 15s ease infinite; /* 1fsi */
-            overflow: hidden; 
+            animación: gradientFire 15s ease infinite; /* 1fsi */
+            desbordamiento: oculto; 
         }
  
-        /* animacion 1fsi */
+        /* animación 1fsi */
         @keyframes gradientFire {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -46,16 +46,16 @@
         }
  
 /* 1fsi xD */
-.sword { 
-    position: absolute; 
-    width: 130px; 
-    height: 130px; 
-    background-size: contain; 
+.espada { 
+    posición: absoluta; 
+    ancho: 130px; 
+    altura: 130px; 
+    tamaño de fondo: contener; 
     background-repeat: no-repeat; 
-    opacity: 0; /* 1fsi */
-    filter: drop-shadow(0 0 15px var(--oro-brillante)); 
-    animation: floatSwords 20s infinite linear; 
-    z-index: 0;
+    opacidad: 0; /* 1fsi */
+    filtro: sombra paralela (0 0 15px var(--oro-brillante)); 
+    animación: floatSwords 20s lineal infinito; 
+    índice z: 0;
 }
  
 /* 1fsi :3 */
@@ -64,63 +64,63 @@
 .s-gold { background-image: url('https://imgur.com/2hdd6Vm.png'); }
  
 @keyframes floatSwords { 
-    0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 
-    10% { opacity: 0.95; } 
-    90% { opacity: 0.95; } 
-    100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; } 
+    0% { transformar: trasladarY(110vh) rotar(0deg); opacidad: 0; } 
+    10% { opacidad: 0,95; } 
+    90% { opacidad: 0,95; } 
+    100% { transformar: trasladarY(-20vh) rotar(360deg); opacidad: 0; } 
 }
         /* --- 1fsi --- */
         .menu-toggle {
-            position: fixed; top: 20px; left: 20px; z-index: 1100;
-            background: var(--gradiente-premium); border: none; color: black;
-            padding: 12px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;
+            posición: fija; arriba: 20px; izquierda: 20px; z-index: 1100;
+            fondo: var(--gradiente-premium); borde: ninguno; color: negro;
+            relleno: 12px 15px; radio de borde: 8px; cursor: puntero; grosor de fuente: negrita;
             box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
         }
  
         /* --- 1fsi --- */
-        .sidebar { 
-            width: var(--sidebar-width); background: linear-gradient(180deg, #0a0a0a 0%, #000 100%); 
-            border-right: 1px solid rgba(255, 255, 255, 0.1); padding: 0; 
-            position: fixed; height: 100vh; z-index: 1000; 
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        .barra lateral { 
+            ancho: var(--sidebar-width); fondo: linear-gradient(180deg, #0a0a0a 0%, #000 100%); 
+            borde derecho: 1px sólido rgba(255, 255, 255, 0.1); relleno: 0; 
+            posición: fija; altura: 100vh; índice z: 1000; 
+            transición: transformar 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex; flex-direction: column;
         }
         .sidebar.hidden { transform: translateX(-100%); }
  
-        .sidebar-header {
-            margin-top: 80px;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 25px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 20px;
+        .encabezado-barra-lateral {
+            margen superior: 80px;
+            fondo: rgba(255, 255, 255, 0.03);
+            relleno: 25px; alineación de texto: centro; borde superior: 1px sólido rgba(255,255,255,0.05); borde inferior: 1px sólido rgba(255,255,255,0.05);
+            margen inferior: 20px;
         }
         .sidebar h2 { 
             font-family: 'Syncopate', sans-serif; font-size: 0.75rem; margin: 0;
-            background: linear-gradient(90deg, var(--blanco-puro), var(--oro-brillante));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            letter-spacing: 3px; font-weight: 900;
+            fondo: gradiente lineal(90deg, var(--blanco-puro), var(--oro-brillante));
+            -webkit-background-clip: texto; -webkit-text-fill-color: transparente;
+            espaciado entre letras: 3px; grosor de fuente: 900;
         }
  
         .nav-container { padding: 0 15px; }
         .nav-btn { 
-            width: 100%; background: transparent; border: 1px solid transparent; 
-            color: #888; padding: 14px 18px; text-align: left; border-radius: 10px; 
-            cursor: pointer; transition: 0.3s; margin-bottom: 8px; font-weight: 700; 
+            ancho: 100%; fondo: transparente; borde: 1px sólido transparente; 
+            color: #888; relleno: 14px 18px; alineación de texto: izquierda; radio de borde: 10px; 
+            cursor: puntero; transición: 0,3 s; margen inferior: 8 px; grosor de fuente: 700; 
             display: flex; align-items: center; gap: 12px; font-size: 0.85rem;
         }
         .nav-btn i { font-size: 1rem; transition: 0.3s; }
  
-        .nav-btn:hover { color: var(--blanco-puro); background: rgba(255, 255, 255, 0.05); }
+        .nav-btn:hover { color: var(--blanco-puro); fondo: rgba(255, 255, 255, 0,05); }
  
         .nav-btn.active { 
-            background: rgba(230, 0, 38, 0.1); color: var(--blanco-puro); 
-            border: 1px solid var(--rojo-core); box-shadow: 0 0 15px rgba(230, 0, 38, 0.2);
+            fondo: rgba(230, 0, 38, 0.1); color: var(--blanco-puro); 
+            borde: 1px sólido var(--rojo-core); sombra de caja: 0 0 15px rgba(230, 0, 38, 0.2);
         }
         .nav-btn.active i { color: var(--oro-brillante); }
  
-        /* --- menu contenido 1fsi es pro --- */
-        .main-content { 
+        /* --- menú contenido 1fsi es pro --- */
+        .contenido-principal { 
             margin-left: var(--sidebar-width); flex-grow: 1; padding: 60px; 
-            z-index: 1; transition: margin 0.4s;
+            z-index: 1; transición: margen 0,4s;
         }
         .main-content.full { margin-left: 0; }
  
@@ -130,19 +130,19 @@
  
         h1 { 
             font-family: 'Syncopate', sans-serif; font-size: 1.4rem; 
-            background: linear-gradient(90deg, var(--blanco-puro), var(--oro-brillante));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            border-left: 4px solid var(--rojo-core); padding-left: 20px; margin-bottom: 45px; 
+            fondo: gradiente lineal(90deg, var(--blanco-puro), var(--oro-brillante));
+            -webkit-background-clip: texto; -webkit-text-fill-color: transparente;
+            borde-izquierdo: 4px sólido var(--rojo-core); relleno-izquierdo: 20px; margen-inferior: 45px; 
         }
  
-        /* --- lideres fsi --- */
+        /* --- líderes fsi --- */
         .leader-tree { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .leader-box { 
-            background: linear-gradient(145deg, #151515, #0a0a0a); padding: 20px; border-radius: 12px; 
-            border: 1px solid rgba(255, 204, 0, 0.3); text-align: center; min-width: 180px; 
-            position: relative; transition: 0.3s;
+            fondo: gradiente lineal(145deg, #151515, #0a0a0a); relleno: 20px; radio de borde: 12px; 
+            borde: 1px sólido rgba(255, 204, 0, 0.3); alineación de texto: centro; ancho mínimo: 180px; 
+            posición: relativa; transición: 0,3 s;
         }
-        .leader-box:hover { border-color: var(--oro-brillante); box-shadow: 0 0 20px rgba(255, 204, 0, 0.15); }
+        .leader-box:hover { color-borde: var(--oro-brillante); sombra de cuadro: 0 0 20px rgba(255, 204, 0, 0.15); }
         .leader-box img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--rojo-core); margin-bottom: 12px; padding: 3px; background: #000; }
         .leader-box .rank { color: var(--oro-brillante); font-size: 0.65rem; font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 8px; letter-spacing: 1px; }
         .line-v { width: 2px; height: 40px; background: linear-gradient(to bottom, var(--rojo-core), var(--oro-brillante)); }
@@ -156,8 +156,8 @@
  
         .roles-nav { display: flex; gap: 10px; flex-wrap: wrap; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; margin-bottom: 35px; border: 1px solid rgba(255,255,255,0.05); }
         .btn-rol { background: #111; border: 1px solid #222; color: #aaa; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.7rem; transition: 0.3s; text-transform: uppercase; }
-        .btn-rol:hover { border-color: var(--rojo-core); color: #fff; }
-        .btn-rol.active { background: var(--blanco-puro); color: #000; border-color: var(--blanco-puro); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+        .btn-rol:hover { color del borde: var(--rojo-core); color: #fff; }
+        .btn-rol.active { fondo: var(--blanco-puro); color: #000; color-borde: var(--blanco-puro); sombra de cuadro: 0 0 15px rgba(255,255,255,0.2); }
  
         .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
         .card { background: rgba(255, 255, 255, 0.03); padding: 25px 15px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
@@ -176,70 +176,70 @@
  
         /* imagen reclutamiento de 1fsi xD */
         .img-reclutamiento {
-            max-width: 100%;
-            height: auto;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            ancho máximo: 100%;
+            altura: automática;
+            radio de borde: 15px;
+            margen inferior: 30px;
+            borde: 1px sólido rgba(255, 255, 255, 0.1);
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
         }
         /* --- donadores de 1fsi --- */
         .donors-container { max-width: 900px; margin: 0 auto; }
         .refresh-tag { text-align: right; font-size: 0.75rem; color: #666; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
-        #timer { color: var(--oro-brillante); font-weight: bold; }
+        #timer { color: var(--oro-brillante); peso de fuente: negrita; }
         .podium { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 60px 0 40px 0; height: 260px; }
         .podium-item { background: var(--tarjeta); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px 15px; text-align: center; position: relative; flex: 1; transition: 0.4s; backdrop-filter: blur(10px); }
         .podium-item img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--rojo-core); margin-bottom: 10px; background: #000; }
-        .rank-1 { height: 110%; border-color: var(--oro-brillante); box-shadow: 0 0 30px rgba(255,204,0,0.15); transform: scale(1.15); z-index: 2; }
+        .rank-1 { altura: 110%; color del borde: var(--oro-brillante); sombra de caja: 0 0 30px rgba(255,204,0,0.15); transformación: escala(1.15); índice z: 2; }
         .rank-1 img { border-color: var(--oro-brillante); width: 90px; height: 90px; }
-        .rank-2 { height: 90%; }
-        .rank-3 { height: 80%; }
+        .rank-2 { altura: 90%; }
+        .rank-3 { altura: 80%; }
         .crown { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 2rem; filter: drop-shadow(0 0 10px var(--oro-brillante)); }
         .money { display: block; color: #00ff88; font-weight: 900; font-size: 1.4rem; margin-top: 8px; }
         .other-donors { background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); margin-top: 20px; }
         .donor-row { display: flex; justify-content: space-between; padding: 18px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center; }
         .donor-row:last-child { border: none; }
-        /* --- 1fsi is pro --- */
+        /* --- 1fsi es pro --- */
         .leader-tree { width: 100%; display: flex; flex-direction: column; align-items: center; }
  
         #rank-3 { 
-            display: grid; 
+            mostrar: cuadrícula; 
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 20px; 
-            width: 100%; 
-            max-width: 1100px; 
-            margin-top: 30px; 
-            justify-content: center;
+            espacio: 20px; 
+            ancho: 100%; 
+            ancho máximo: 1100px; 
+            margen superior: 30px; 
+            justificar-contenido: centro;
         }
  
         .leader-box { 
-            width: 100% !important; 
-            max-width: 220px; 
-            margin: 0 auto; 
+            ancho: 100% !importante; 
+            ancho máximo: 220px; 
+            margen: 0 automático; 
         }
         /* Botón de música flotante 1fsi */
-        #music-control {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            z-index: 9999;
-            background: linear-gradient(135deg, #e60026, #ffcc00);
-            border: 2px solid #ffcc00;
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            cursor: pointer;
-            font-size: 1.6rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        #control-musical {
+            posición: fija;
+            parte inferior: 25px;
+            derecha: 25px;
+            Índice z: 9999;
+            fondo: gradiente lineal(135deg, #e60026, #ffcc00);
+            borde: 2px sólido #ffcc00;
+            radio de borde: 50%;
+            ancho: 55px;
+            altura: 55px;
+            cursor: puntero;
+            tamaño de fuente: 1,6rem;
+            pantalla: flexible;
+            alinear-elementos: centro;
+            justificar-contenido: centro;
             box-shadow: 0 0 20px rgba(230, 0, 38, 0.5);
-            transition: all 0.3s ease;
+            transición: todos 0,3 s de facilidad;
         }
         #music-control:hover { transform: scale(1.1); }
     </style>
 </head>
-<body>
+<cuerpo>
  
     <div id="bg-combat"></div>
     <audio id="bg-music" loop>
@@ -251,12 +251,12 @@
     </button>
  
     <button class="menu-toggle" onclick="toggleMenu()">
-        <i class="fas fa-bars"></i> MENU
+        <i class="fas fa-bars"></i> MENÚ
     </button>
  
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h2>DASHBOARD</h2>
+            <h2>PANEL DE CONTROL</h2>
         </div>
         <div class="nav-container">
             <button class="nav-btn active" onclick="switchTab('info', this)"><i class="fas fa-satellite-dish"></i> ESTADO</button>
@@ -266,7 +266,7 @@
             <button class="nav-btn" onclick="switchTab('miembros', this)"><i class="fas fa-user-shield"></i> MIEMBROS</button>
             <button class="nav-btn" onclick="switchTab('alianzas', this)"><i class="fas fa-handshake"></i> ALIANZAS</button>
             <button class="nav-btn" onclick="switchTab('postulaciones', this)"><i class="fas fa-envelope-open-text"></i> UNIRSE</button>
-            <button class="nav-btn" onclick="switchTab('top-donadores', this)"><i class="fas fa-trophy"></i> TOP DONADORES</button>
+            <button class="nav-btn" onclick="switchTab('top-donadores', this)"><i class="fas fa-trophy"></i> PRINCIPALES DONANTES</button>
         </div>
     </div>
  
@@ -281,7 +281,7 @@
         </div>
  
          <div id="lideres" class="section">
-            <h1>Informacion</h1>
+            <h1>Información</h1>
             <div class="leader-tree">
                 <div id="rank-1"></div> <div class="line-v"></div>
                 <div id="rank-2"></div> <div class="line-v"></div>
@@ -326,15 +326,15 @@
                 </div>
                 <div class="farm-card">
                     <img src="https://i.imgur.com/Hq6UTrr.png" style="width:100%; height:160px; object-fit:cover;">
-                    <div style="padding:20px;"><h3>Zona Bases</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                    <div style="padding:20px;"><h3>Bases de Zona</h3><span class="farm-badge">ESTRATEGIA</span></div>
                 </div>
                 <div class="farm-card">
                     <img src="https://i.imgur.com/OiA4Fcu.png" style="width:100%; height:160px; object-fit:cover;">
-                    <div style="padding:20px;"><h3>Zona Bases</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                    <div style="padding:20px;"><h3>Zona Catedral</h3><span class="farm-badge">ESTRATEGIA</span></div>
                 </div>
                 <div class="farm-card">
                     <img src="https://i.imgur.com/YICIiMW.png" style="width:100%; height:160px; object-fit:cover;">
-                    <div style="padding:20px;"><h3>Zona Bases</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                    <div style="padding:20px;"><h3>Zona Estatua</h3><span class="farm-badge">ESTRATEGIA</span></div>
                 </div>
             </div>
         </div>
@@ -343,22 +343,22 @@
             <div class="roles-nav">
                 <button class="btn-rol active" onclick="filtroTotal('Todos', this)">Todos</button>
                 <button class="btn-rol" onclick="filtroTotal('𝒑𝒗𝒑', this)">⚔️ PVP</button>
-                <button class="btn-rol" onclick="filtroTotal('𝒃𝒖𝒊𝒍𝒅𝒆𝒓𝒔', this)">⚒️ Builders</button>
+                <button class="btn-rol" onclick="filtroTotal('𝒃𝒖𝒊𝒍𝒅𝒆𝒓𝒔', this)">⚒️ Constructores</button>
                 <button class="btn-rol" onclick="filtroTotal('𝒕𝒆𝒄𝒏𝒊𝒄𝒐𝒔', this)">⚙️ Técnicos</button>
-                <button class="btn-rol" onclick="filtroTotal('Farmer', this)">🌱 Farmers</button>
-                <button class="btn-rol" onclick="filtroTotal('Herrero', this)">🔨 Herreros</button>
+                <button class="btn-rol" onclick="filtroTotal('Farmer', this)">🌱 Agricultores</button>
+                <button class="btn-rol" onclick="filtroTotal('Herrero', esto)">🔨 Herreros</button>
             </div>
             <div class="member-grid" id="lista-usuarios"></div>
         </div>
 <div id="alianzas" class="section">
-            <h1>ALIANZAS</h1>
+            <h1>ALIANCES</h1>
             <div class="farm-grid">
                 <div class="farm-card">
                     <img src="https://imgur.com/AWQUz8H.png" style="width:100%; height:100px; object-fit: contain; background: #000; padding: 10px 0;">
                     <div style="padding:20px;">
                         <h3>ZERKS</h3>
                         <span class="farm-badge" style="background: #0072ff; color: #fff;">TOP 5</span>
-                        <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Aliado Oficial.</p>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Alido Oficial.</p>
                     </div>
                 </div>
  
@@ -376,7 +376,7 @@
                     <div style="padding:20px;">
                         <h3>ColmillosxNytheron</h3>
                         <span class="farm-badge" style="background: #0072ff; color: #fff;">Alianza Oficial</span>
-                        <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Aliado Oficial.</p>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Alido Oficial.</p>
                     </div>
                 </div>
  
@@ -392,24 +392,48 @@
                 <div class="farm-card">
                    <img src="https://imgur.com/AWQUz8H.png" style="width:100%; height:100px; object-fit: contain; background: #000; padding: 10px 0;">
                     <div style="padding:20px;">
-                        <h3>LegionDeLasTresBestias</h3>
+                        <h3>LegiónDeLasTresBestias</h3>
                         <span class="farm-badge" style="background: #0072ff; color: #fff;">Alianza Oficial</span>
                         <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Aliado.</p>
+                <div class="farm-card">
+                    <img src="https://imgur.com/AWQUz8H.png" style="width:100%; height:100px; object-fit: contain; background: #000; padding: 10px 0;">
+                    <div style="padding:20px;">
+                        <h3>---TDS---</h3>
+                        <span class="farm-badge" style="background: #0072ff; color: #fff;">Alianza Oficial</span>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Aliado.</p>
+                    </div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://imgur.com/AWQUz8H.png" style="width:100%; height:100px; object-fit: contain; background: #000; padding: 10px 0;">
+                    <div style="padding:20px;">
+                        <h3>DESTRONADOS</h3>
+                        <span class="farm-badge" style="background: #0072ff; color: #fff;">Alianza Oficial</span>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Aliado.</p>
+                    </div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://imgur.com/AWQUz8H.png" style="width:100%; height:100px; object-fit: contain; background: #000; padding: 10px 0;">
+                    <div style="padding:20px;">
+                        <h3>GuardasReales</h3>
+                        <span class="farm-badge" style="background: #0072ff; color: #fff;">Alianza Oficial</span>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Aliado.</p>
+                    </div>
+                </div>
                     </div>
                 </div>
             </div>
         </div>
  
-        <div id="postulaciones" class="section">
+        <div id="postulaciones" class="sección">
             <h1>RECLUTAMIENTO</h1>
             <div style="background: linear-gradient(145deg, #111, #050505); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 204, 0, 0.2); text-align: center;">
  
                 <img src="https://imgur.com/kYVP3os.png" alt="Reclutamiento Colmillos del Alba" class="img-reclutamiento">
  
                 <h2 style="font-family: 'Syncopate'; font-size: 1.2rem; color: var(--blanco-puro); margin-bottom: 15px;">¿TIENES LO QUE SE NECESITA?</h2>
-                <p style="color: #888; margin-bottom: 40px; font-weight: 500;">Estamos Disponibles Las 24 Horas Del Dìa</p>
-                <a href="https://discord.gg/xw9pzw3kB5" target="_blank" class="btn-postular">
-                    <i class="fas fa-paper-plane"></i> ENVIAR SOLICITUD
+                <p style="color: #888; margin-bottom: 40px; font-weight: 500;">Estamos Disponibles Las 24 Horas Del Día</p>
+                <a href="https://discord.gg/hPyR4BZGf2" target="_blank" class="btn-postular">
+                    <i class="fas fa-paper-plane"></i> SOLICITUD ENVIAR
                 </a>
             </div>
         </div>
@@ -425,36 +449,36 @@
  
     <script>
         // fsi paulo londra
-function toggleMusic() {
+función alternarMúsica() {
     const music = document.getElementById('bg-music');
     const emoji = document.getElementById('music-emoji');
-    if (music.paused) {
+    si (música.pausada) {
         music.play().catch(e => console.log("Error al reproducir: ", e));
         emoji.innerText = '🔊';
-    } else {
-        music.pause();
+    } demás {
+        música.pausa();
         emoji.innerText = '🔇';
     }
 }
-        function toggleMenu() {
+        función alternarMenú() {
             document.getElementById('sidebar').classList.toggle('hidden');
             document.getElementById('main-content').classList.toggle('full');
         }
  
-        function createSwords() {
+        función crearEspadas() {
             const container = document.getElementById('bg-combat');
             const types = ['s-neth', 's-diam', 's-gold'];
-            for(let i=0; i<15; i++) {
+            para(sea i=0; i<15; i++) {
                 const s = document.createElement('div');
-                s.className = `sword ${types[Math.floor(Math.random()*3)]}`;
+                s.className = `espada ${types[Math.floor(Math.random()*3)]}`;
                 s.style.left = Math.random()*100 + 'vw';
                 s.style.animationDelay = Math.random()*15 + 's';
-                container.appendChild(s);
+                contenedor.añadirHijo(s);
             }
         }
-        createSwords();
+        crearEspadas();
  
-        function switchTab(id, btn) {
+        función switchTab(id, btn) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -474,14 +498,16 @@ function toggleMusic() {
                 { nick: "postm_alone", rango: "⚔️ Líder PvP" },
                 { nick: "sannvl", rango: "🛡️ Colíder PvP" },
                 { nick: "Otungs", rango: "🛡️ Tester PvP" },
-                { nick: "1fsi.", rango: "🔧 Lider Farmer" },
-                { nick: "Jus.7", rango: "📜 Staff" },
-                { nick: "Hell_8", rango: "📜 Staff" }
+                { nick: "1fsi.", rango: "🔧 Líder Granjero" },
+                { nick: "Jus.7", rango: "📜 Personal" },
+                { nick: "Hell_8", rango: "📜 Staff" },
+                { nick: "poco758", rango: "📜 Personal" },
+                { nick: "renna6509", rango: "📜 Personal" }
             ]
         };
  
-        async function inicializar() {
-            try {
+        función asíncrona inicializar() {
+            intentar {
                 const res = await fetch(`${API_URL}?t=${Date.now()}`);
                 miembrosCache = await res.json();
                 renderJerarquia();
@@ -489,20 +515,20 @@ function toggleMusic() {
             } catch(e) { console.error(e); }
         }
  
-        function renderJerarquia() {
+        función renderJerarquia() {
             document.getElementById('rank-1').innerHTML = cardLider(DATA_LIDERES.supremo);
             document.getElementById('rank-2').innerHTML = cardLider(DATA_LIDERES.colider);
             document.getElementById('rank-3').innerHTML = DATA_LIDERES.divisiones.map(l => cardLider(l)).join('');
         }
  
-        function cardLider(info) {
+        función cardLider(info) {
             const user = miembrosCache.find(m => (m.username||"").toLowerCase().includes(info.nick.toLowerCase()));
             const img = user ? user.avatar : 'https://cdn.discordapp.com/embed/avatars/0.png';
             return `<div class="leader-box"><span class="rank">${info.rango}</span><img src="${img}"><div style="font-weight:900; font-size:0.8rem; color: #fff;">${user ? (user.nickname || user.username) : info.nick}</div></div>`;
         }
  
-        function filtroTotal(rolBusqueda, btn) {
-            if(btn) {
+        función filtroTotal(rolBusqueda, btn) {
+            si(btn) {
                 document.querySelectorAll('.btn-rol').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
             }
@@ -511,33 +537,33 @@ function toggleMusic() {
                 ? miembrosCache 
                 : miembrosCache.filter(u => u.roles && u.roles.some(r => r.includes(rolBusqueda) || r.toLowerCase().includes(rolBusqueda.toLowerCase())));
  
-            grid.innerHTML = filtrados.map(u => `
+            cuadrícula.innerHTML = filtrados.map(u => `
                 <div class="card">
                     <img src="${u.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}">
                     <div style="font-weight:900; font-size:0.8rem; color: #ddd;">${u.nickname || u.username}</div>
                 </div>
             `).join('');
         }
-        let tiempoRestante = 300; 
+        sea ​​tiempoRestante = 300; 
         const API_DONACIONES = "https://colmillosdelalba-bot-production.up.railway.app/donaciones";
  
-        function iniciarContador() {
+        función iniciarContador() {
             setInterval(() => {
                 tiempoRestante--;
-                if (tiempoRestante <= 0) {
+                si (tiempoRestante <= 0) {
                     tiempoRestante = 300;
                     cargarDonaciones();
                 }
                 let m = Math.floor(tiempoRestante / 60);
-                let s = tiempoRestante % 60;
-                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                sea ​​s = tiempoRestante % 60;
+                document.getElementById('temporizador').innerText = `${m}:${s < 10? '0' : ''}${s}`;
             }, 1000);
         }
  
-        async function cargarDonaciones() {
-            try {
+        función asíncrona cargarDonaciones() {
+            intentar {
                 const respuesta = await fetch(`${API_DONACIONES}?t=${Date.now()}`);
-                const lista = await respuesta.json();
+                const lista = espera respuesta.json();
                 dibujarDonadores(lista);
             } catch (e) { console.log("Error al obtener donaciones."); }
         }
@@ -546,11 +572,11 @@ function toggleMusic() {
             const podio = document.getElementById('podium-area');
             const tabla = document.getElementById('list-area');
             podio.innerHTML = ''; tabla.innerHTML = '';
-            datos.forEach((user, i) => {
-                if(i < 3) {
+            datos.forEach((usuario, i) => {
+                si(i < 3) {
                     const iconos = ['👑', '🥈', '🥉'];
                     podio.innerHTML += `<div class="podium-item rank-${i+1}"><div class="crown">${iconos[i]}</div><img src="${user.avatar}"><div style="font-weight:900">${user.username}</div><span class="money">$${user.cantidad.toLocaleString()}</span></div>`;
-                } else {
+                } demás {
                     tabla.innerHTML += `<div class="donor-row"><span>#${i+1} <b>${user.username}</b></span><span style="color:#00ff88; font-weight:bold">$${user.cantidad.toLocaleString()}</span></div>`;
                 }
             });
@@ -563,4 +589,3 @@ function toggleMusic() {
  
 </body>
 </html>
- 
